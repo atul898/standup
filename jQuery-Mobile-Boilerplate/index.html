@@ -1,0 +1,217 @@
+<!--
+	jQuery Mobile Boilerplate
+	index.html
+-->
+<!doctype html>
+<html>
+<head>
+	<title> Standup </title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Add to home related-->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+	<!-- jQuery Mobile CSS bits -->
+	<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+
+
+	<!-- if you have a custom theme, add it here -->
+<!--	<link rel="stylesheet"  href="/jQuery-Mobile-Boilerplate/themes/jQuery-Mobile-Boilerplate.css" />-->
+
+	<!-- Custom css -->
+	<link rel="stylesheet" href="/jQuery-Mobile-Boilerplate/css/custom.css" />
+
+	<!-- Javascript includes -->
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+	<script src="/jQuery-Mobile-Boilerplate/js/mobileinit.js"></script>
+	<script src="/jQuery-Mobile-Boilerplate/js/ios-orientationchange-fix.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	<script src="/jQuery-Mobile-Boilerplate/js/application.js"></script>
+
+    <!-- Date specific include -->
+    <script src="/jQuery-Mobile-Boilerplate/js/date.js"></script>
+    <!--Local Javascript-->
+	<script type="text/javascript" src="/jQuery-Mobile-Boilerplate/js/localHelper.js"  ></script>
+
+    <script type="text/javascript">
+        //Global date variable for caching current date
+        var localDateVariable;
+    </script>
+
+
+
+<!-- For third-generation iPad with high-resolution Retina display: -->
+<!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png">-->
+<!-- For iPhone with high-resolution Retina display: -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
+<!-- For first- and second-generation iPad: -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <!--Add to home related-->
+	<link rel="stylesheet" href="/jQuery-Mobile-Boilerplate/css/add2home.css">
+    <script type="text/javascript">
+        var addToHomeConfig = {
+            animationIn: 'drop',
+            animationOut: 'fade',
+            lifespan: 15000,
+            expire: 2,
+            touchIcon: true,
+            message: 'Install this webapp on your <strong>%device</strong>. Tap `%icon`  and then <strong>Add to Home Screen</strong>.'
+        };
+    </script>
+	<script type="text/javascript" src="/jQuery-Mobile-Boilerplate/js/add2home.js" charset="utf-8"></script>
+
+
+    <!--advanced list - back button related-->
+<!--    <script type="text/javascript">
+        $(document).bind("mobileinit", function () {
+            $.mobile.page.prototype.options.addBackBtn = true;
+        });    
+</script>  -->
+
+
+</head> 
+<body> 
+
+	<div data-role="page" id="mainPage" data-add-back-btn="true">
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>Standup</h1> 
+            <a href="/jQuery-Mobile-Boilerplate/index.html" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>
+            <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-prefetch>Settings</a>
+		</div><!-- /header -->
+
+		<div data-role="content">
+            <ul data-role="listview" id="messageList" data-theme="d" data-divider-theme="d"></ul>
+		</div>
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+
+    <div data-role="page" id="settingsPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>Settings</h1> 
+            <a href="#mainPage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>
+		</div><!-- /header -->
+
+    <div data-role="content">   
+<!--			<div data-role="fieldcontain">-->
+<!--			    <fieldset data-role="controlgroup">-->
+<!--			    	<legend>I am interested in: </legend>
+			        <input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1" checked="checked" />
+			        <label for="radio-choice-1">Daily Standup Updates</label>
+
+			        <input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  />
+			        <label for="radio-choice-2">Main Conference Room</label>
+
+			        <input type="radio" name="radio-choice-1" id="radio-choice-3" value="choice-3"  />
+			        <label for="radio-choice-3">Internal Conference Room</label>
+                    <br />-->
+
+			        <h3>Welcome Message</h3>
+                    <p>This text will be displayed on the HDTV display at Yahara frontdesk</p>
+			        <textarea cols="40" rows="8" name="textarea" id="textarea"></textarea>
+               <!-- </fieldset>-->
+				<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true" STYLE="text-decoration:none">Submit</a>
+                <!--STYLE="text-decoration:none"-->
+<!--			</div>-->
+    </div><!-- /content -->
+
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+
+    <div data-role="page" id="aboutPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>About Us</h1> 
+            <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Settings</a>
+		</div><!-- /header -->
+
+    <div data-role="content" user-scalable="yes">   
+<!--        <iframe src="http://www.yaharasoftware.com/TopNavigation/AboutUs.aspx" width="100%" height="100%">
+            <p>Your browser does not support iframes.</p>
+        </iframe>   -->
+        <p>&copy; Yahara Software </p>
+    </div><!-- /content -->
+
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+    <div data-role="page" id="confirmPopupPage" data-dom-cache="true"><!-- page-->
+		<div data-role="header" data-theme="a">
+			<h1>Confirm</h1>
+		</div><!-- /header -->
+
+		<div data-role="content" data-theme="d">
+			<h2>Are you sure?</h2>
+			<p>The HGTV display on frontdesk will be changed to reflect your text.</p>
+				
+			<form action="#" method="get">
+				<div data-role="fieldcontain">
+					<!--<label for="sliderYesNo">Swipe here:</label>-->
+					<select name="sliderYesNo" id="sliderYesNo" data-role="slider" onchange="sliderValueChange(this);">
+						<option SELECTED value="off">No</option>
+						<option value="on">Yes</option>
+					</select>
+				</div>
+			</form>
+			
+			<a id="changeWelcomeMessage" data-role="button" data-theme="b"  data-inline="true" STYLE="text-decoration:none"><!--href="#settingsPage" data-rel="back"-->
+            Done
+            </a>   
+		</div>
+	</div>
+
+		<div data-role="popup" id="popupLogin" data-overlay-theme="b" data-theme="a" class="ui-corner-all">
+			<form>
+				<div style="padding:10px 20px;">
+				  <h3>Please sign in</h3>
+		          <label for="un" class="ui-hidden-accessible">Username:</label>
+		          <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" />
+
+		          <label for="pw" class="ui-hidden-accessible">Password:</label>
+		          <input type="password" name="pw" id="pass" value="" placeholder="password" data-theme="a" />
+		
+		    	  <button id="popupLoginButton" type="submit" data-theme="b" >Sign in</button>
+				</div>
+			</form>
+		</div>
+
+    <div data-role="page" id="detailPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>Details</h1> 
+            <a href="#mainPage" data-icon="home" data-iconpos="notext" data-direction="reverse" data-rel="back">Home</a>
+            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>
+		</div><!-- /header -->
+
+    <div data-role="content" id="detailPageContent">   
+        <ul id="detailPageul" data-role="listview" data-theme="d" data-divider-theme="d">
+                    
+        </ul>
+<!--<ul data-role="listview" id="Ul1" data-theme="d" data-divider-theme="d"></ul>-->
+    </div><!-- /content -->
+
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+</body>
+</html>
+
