@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Where", "Where\Where.csproj", "{BF583F45-90BB-4840-AA3F-ADB97B8F9114}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "jQuery-Mobile-Boilerplate", "..\..\..\inetpub\wwwroot\jQuery-Mobile-Boilerplate\", "{042CD159-8C1D-42C9-88A9-F64C49E300B1}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/jQuery-Mobile-Boilerplate"
+		Debug.AspNetCompiler.PhysicalPath = "..\..\..\inetpub\wwwroot\jQuery-Mobile-Boilerplate\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\jQuery-Mobile-Boilerplate\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/jQuery-Mobile-Boilerplate"
+		Release.AspNetCompiler.PhysicalPath = "..\..\..\inetpub\wwwroot\jQuery-Mobile-Boilerplate\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\jQuery-Mobile-Boilerplate\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "61725"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF583F45-90BB-4840-AA3F-ADB97B8F9114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF583F45-90BB-4840-AA3F-ADB97B8F9114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF583F45-90BB-4840-AA3F-ADB97B8F9114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF583F45-90BB-4840-AA3F-ADB97B8F9114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{042CD159-8C1D-42C9-88A9-F64C49E300B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{042CD159-8C1D-42C9-88A9-F64C49E300B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{042CD159-8C1D-42C9-88A9-F64C49E300B1}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{042CD159-8C1D-42C9-88A9-F64C49E300B1}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
