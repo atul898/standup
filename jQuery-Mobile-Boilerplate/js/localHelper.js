@@ -2,7 +2,7 @@
 //http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/WelcomeMessage?message=%22Hello%20World!%22
 
 
-function callService(selectedDate) {
+function callGetStandupStatus(selectedDate) {
 
     //Clear list
     $("#messageList").empty();
@@ -13,7 +13,8 @@ function callService(selectedDate) {
 
     $("#messageList").listview('refresh');
 
-    var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+    var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
+    //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
@@ -93,10 +94,15 @@ function callService(selectedDate) {
      });
  }
 
+ //reset type=date inputs to text
+ $(document).bind("mobileinit", function () {
+     $.mobile.page.prototype.options.degradeInputs.date = true;
+ });
 
  $(document).ready(function () {
 
      localDateVariable = new Date();
+     //$("#tpDateBox").attr("value", localDateVariable);
 
      var curr_date = localDateVariable.getDate();
      var curr_month = localDateVariable.getMonth();
@@ -105,7 +111,7 @@ function callService(selectedDate) {
                 ("0" + (localDateVariable.getMonth() + 1)).slice(-2) + "" +
                 ("0" + localDateVariable.getDate()).slice(-2) + "" +
                 localDateVariable.getFullYear();
-     callService(selectedDate);
+     callGetStandupStatus(selectedDate);
 
 
      $("#mainPage").live('swipeleft swiperight', function (event) {
@@ -118,7 +124,7 @@ function callService(selectedDate) {
                         ("0" + (localDateVariable.getMonth() + 1)).slice(-2) + "" +
                         ("0" + localDateVariable.getDate()).slice(-2) + "" +
                         localDateVariable.getFullYear();
-             callService(selectedDate);
+             callGetStandupStatus(selectedDate);
 
              //             var prev = $("#previndex", $.mobile.activePage);
              //             var previndex = $(prev).data("index");
@@ -135,7 +141,7 @@ function callService(selectedDate) {
                         ("0" + (localDateVariable.getMonth() + 1)).slice(-2) + "" +
                         ("0" + localDateVariable.getDate()).slice(-2) + "" +
                         localDateVariable.getFullYear();
-             callService(selectedDate);
+             callGetStandupStatus(selectedDate);
 
              //             var next = $("#nextindex", $.mobile.activePage);
              //             var nextindex = $(next).data("index");
@@ -157,14 +163,14 @@ function callService(selectedDate) {
          $("#sliderYesNo").selectmenu("refresh");
      });
 
-          $("#textarea").keyup(function () {
-              $("#output_div").html($(this).val().replace('\n', '<br/>'));
-          });
+     $("#textarea").keyup(function () {
+         $("#output_div").html($(this).val().replace('\n', '<br/>'));
+     });
 
 
-//          $("#textarea").keyup(function () {
-//              $("#output_div").html(nl2br_js($(this).val()));
-//          }); 
+     //          $("#textarea").keyup(function () {
+     //              $("#output_div").html(nl2br_js($(this).val()));
+     //          }); 
 
      $("#changeWelcomeMessage").click(function (event) {
          var a = 0;
@@ -174,12 +180,13 @@ function callService(selectedDate) {
          if ($("#sliderYesNo")[0].selectedIndex == 1) {
              a = 2;
 
-//             var myTextareaVal = $('#textarea').val();
-//             var myLineBreak = myTextareaVal.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '<br />');
+             //             var myTextareaVal = $('#textarea').val();
+             //             var myLineBreak = myTextareaVal.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '<br />');
 
              //http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/WelcomeMessage?message=%22Hello%20World!%22
              //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/WelcomeMessage?message=" + $("textarea").val();
-             var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/WelcomeMessage";
+             //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/WelcomeMessage";
+             var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/WelcomeMessage";
              //             $.getJSON(link)
              //            .success(
              //             function (data) {
@@ -205,7 +212,7 @@ function callService(selectedDate) {
                  success: function (data) {
                      alert("done!");
                  },
-                 error:function () {
+                 error: function () {
                      alert("Writing to Yahara HDTV display failed. Check your connection!");
                  }
              });
@@ -254,6 +261,16 @@ function callService(selectedDate) {
 
      });
 
+//     $('#tpDateBox').datepicker().onchange(function (event) {
+//         var d = $('#tpDateBox').value;
+//     });
+//     $("#tpDateBox").datebox({
+//         onselect: function (dateText) {
+//             //display("Selected date: " + dateText + "; input's current value: " + this.value);
+//             alert("Selected date: " + dateText + "; input's current value: " + this.value);
+//         }
+//     });
+
  });
 
  function sliderValueChange(selectObj) {
@@ -289,4 +306,82 @@ function callService(selectedDate) {
 //     s = new String(myString);
 //     s = s.replace(regX, "<br /> \n");
 //     return s;
-// }
+ // }
+
+ function tpDateValueSet(obj) {
+     var dateChosen = obj.value;
+     var dateInNeededFormat = dateChosen.substring(5, 7) + dateChosen.substring(8, 10) + dateChosen.substring(0, 4)
+     callGetEmployeeTargetProcessSummary(dateInNeededFormat);
+ }
+
+ function callGetEmployeeTargetProcessSummary(selectedDate) {
+
+     //Clear list
+     $("#tpPageList").empty();
+
+     //Add the 'Loading' header
+     var row = '<li data-role="list-divider">' + 'Contacting TP Server....' + '</li>';
+     $("#tpPageList").append(row);
+
+     $("#tpPageList").listview('refresh');
+
+     var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?"
+     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://192.168.1.107/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+
+
+     $.getJSON(link)
+    .success(
+     function (data) {
+
+         $("ul").fadeTo(0, 0.0);
+
+         //Log
+         console.log(data.Date);
+
+         //Clear list
+         $("#tpPageList").empty();
+
+         //Add the header
+         var row = '<li data-role="list-divider" id="dateHeader">' + data.DisplayDate
+                    + '<span class="ui-li-count" id="itemCount">' + data.ListOfItems.length
+                    + '</span></li>'
+         $("#tpPageList").append(row);
+
+         for (var i = 0; i < data.ListOfItems.length; i++) {
+             console.log(data.ListOfItems[i].Email);
+
+             //Each item looks like this    
+//                <li>Inbox <span class="ui-li-count">12</span></li>
+
+             var row = '<li>' + data.ListOfItems[i].Name + ' <span class="ui-li-count">' + data.ListOfItems[i].TotalHoursLogged +  '</span></li>';
+
+             $("#tpPageList").append(row);
+         }
+
+         $("#tpPageList").listview('refresh');
+         $("ul").fadeTo(100, 0.1);
+         $("ul").fadeTo(500, 1.0);
+     })
+
+    .error(
+     function () {
+         //Clear list
+         $("#tpPageList").empty();
+
+         //Add the header
+         var row = '<li data-role="list-divider">' + 'Err! Please try again later.' + '</li>';
+         $("#tpPageList").append(row);
+
+         $("#tpPageList").listview('refresh');
+     })
+
+    .complete(
+     function () {
+         //alert("complete");
+     });
+ }

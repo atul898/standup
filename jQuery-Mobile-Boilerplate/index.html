@@ -17,25 +17,35 @@
 	<!-- jQuery Mobile CSS bits -->
 	<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
 
+	<link type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" rel="stylesheet" /> 
+	<link type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" rel="stylesheet" /> 
+	<link type="text/css" href="http://dev.jtsage.com/jQM-DateBox/css/demos.css" rel="stylesheet" /> 
 
 	<!-- if you have a custom theme, add it here -->
-<!--	<link rel="stylesheet"  href="/jQuery-Mobile-Boilerplate/themes/jQuery-Mobile-Boilerplate.css" />-->
+<!--	<link rel="stylesheet"  href="/themes/jQuery-Mobile-Boilerplate.css" />-->
 
 	<!-- Custom css -->
-	<link rel="stylesheet" href="/jQuery-Mobile-Boilerplate/css/custom.css" />
+	<link rel="stylesheet" href="/css/custom.css" />
 
 	<!-- Javascript includes -->
 	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 
-	<script src="/jQuery-Mobile-Boilerplate/js/mobileinit.js"></script>
-	<script src="/jQuery-Mobile-Boilerplate/js/ios-orientationchange-fix.min.js"></script>
+	<script src="/js/mobileinit.js"></script>
+	<script src="/js/ios-orientationchange-fix.min.js"></script>
 	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
-	<script src="/jQuery-Mobile-Boilerplate/js/application.js"></script>
+	<script src="/js/application.js"></script>
 
     <!-- Date specific include -->
-    <script src="/jQuery-Mobile-Boilerplate/js/date.js"></script>
+    <script src="/js/date.js"></script>
+
+	<script type="text/javascript" src="http://dev.jtsage.com/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.js"></script>
+
+
     <!--Local Javascript-->
-	<script type="text/javascript" src="/jQuery-Mobile-Boilerplate/js/localHelper.js"  ></script>
+	<script type="text/javascript" src="/js/localHelper.js"  ></script>
+
 
     <script type="text/javascript">
         //Global date variable for caching current date
@@ -58,7 +68,7 @@
     <link rel="shortcut icon" href="favicon.ico" />
 
     <!--Add to home related-->
-	<link rel="stylesheet" href="/jQuery-Mobile-Boilerplate/css/add2home.css">
+	<link rel="stylesheet" href="/css/add2home.css">
     <script type="text/javascript">
         var addToHomeConfig = {
             animationIn: 'drop',
@@ -69,7 +79,7 @@
             message: 'Install this webapp on your <strong>%device</strong>. Tap `%icon`  and then <strong>Add to Home Screen</strong>.'
         };
     </script>
-	<script type="text/javascript" src="/jQuery-Mobile-Boilerplate/js/add2home.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/js/add2home.js" charset="utf-8"></script>
 
 
     <!--advanced list - back button related-->
@@ -86,12 +96,31 @@
 	<div data-role="page" id="mainPage" data-add-back-btn="true">
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>Standup</h1> 
-            <a href="/jQuery-Mobile-Boilerplate/index.html" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>
+            <a href="/index.html" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>
             <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-prefetch>Settings</a>
 		</div><!-- /header -->
 
 		<div data-role="content">
             <ul data-role="listview" id="messageList" data-theme="d" data-divider-theme="d"></ul>
+		</div>
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+	<div data-role="page" id="tpPage" data-add-back-btn="true">
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>TP Summary</h1> 
+            <a href="#tpPage" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>
+            <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-prefetch>Settings</a>
+		</div><!-- /header -->
+
+		<div data-role="content">
+				<div data-role="fieldcontain">
+					<label for="calstartday">Some Date</label>
+                    <input name="calstartday" type="date" data-role="datebox" id="tpDateBox" data-options='{"mode": "calbox", "calStartDay": 1}' onChange="tpDateValueSet(this)"/>
+            <ul data-role="listview" id="tpPageList" data-theme="d" data-divider-theme="d"></ul>
+				</div>
 		</div>
 <!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>

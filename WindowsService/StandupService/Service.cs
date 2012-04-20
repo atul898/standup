@@ -13,6 +13,12 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Dynamic;
+using System.Web.Script.Serialization;
+using System.Net;
+using System.IO;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 
 namespace StandupService
@@ -113,6 +119,14 @@ namespace StandupService
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/WelcomeMessage?message={message}")]
         bool WelcomeMessage(string message);
+
+        [OperationContract]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeTargetProcessSummary?date={date}")]
+        Summary GetEmployeeTargetProcessSummary(string date); //mmddyyyy format
+
+        [OperationContract]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeWebShadowSummary?date={date}")]
+        Summary GetEmployeeWebShadowSummary(string date); //mmddyyyy format
     }
 
     // Implement the ICalculator service contract in a service class.
@@ -202,6 +216,134 @@ namespace StandupService
                     , EventLogEntryType.Error, 234);
                 return false;
             }
+        }
+
+        public Summary GetEmployeeTargetProcessSummary(string strDate) //mmddyyyy format
+        {
+            DateTime requestedDate = strDate.StringToDateTime();
+            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
+            previousMonday = previousMonday.AddDays(-1); //hack, but hey it works
+
+            //Step 1 : Collect all emails
+            Summary summary = new Summary(strDate.StringToDateTime());
+            var webClient = new WebClient();
+            webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
+
+            var nextLink = "http://tp.yaharasoftware.com/api/v1/Users?format=json";
+
+            while (nextLink != null)
+            {
+                Stream data = webClient.OpenRead(nextLink);
+                StreamReader reader = new StreamReader(data);
+                string json = reader.ReadToEnd();
+                //Debug.WriteLine(json);
+                data.Close();
+                reader.Close();
+
+                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
+                int count = tpEntry.Items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    try
+                    {
+                        string email = tpEntry.Items[i]["Email"].ToLower();
+                        if (!email.Contains("yahara") || tpEntry.Items[i]["IsActive"] == false)
+                            continue;
+
+                        EmployeeDetail ed = new EmployeeDetail();
+                        ed.Id = tpEntry.Items[i]["Id"];
+                        ed.Name = tpEntry.Items[i]["FirstName"] + " " + tpEntry.Items[i]["LastName"];
+                        ed.Email = tpEntry.Items[i]["Email"];
+                        summary.ListOfItems.Add(ed);
+                    }
+                    catch
+                    {
+                        //ignore and move on
+                    }
+                }
+                try
+                {
+                    if (tpEntry.Next != null)
+                        nextLink = tpEntry.Next;
+                    else
+                        nextLink = null;
+                }
+                catch (KeyNotFoundException)
+                {
+                    nextLink = null;
+                }
+            }
+
+            //Step 2 : Collect all times for this week
+            //var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'2012-04-16')%20and%20(Date%20lt%20'2012-04-19')";
+            var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'"
+                                + previousMonday.ToString("yyyy-MM-dd")
+                                + "')%20and%20(Date%20lt%20'"
+                                + requestedDate.ToString("yyyy-MM-dd")
+                                + "')";
+
+            while (nextTimeLink != null)
+            {
+                Stream data = webClient.OpenRead(nextTimeLink);
+                StreamReader reader = new StreamReader(data);
+                string json = reader.ReadToEnd();
+                //Debug.WriteLine(json);
+                data.Close();
+                reader.Close();
+
+                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
+                int count = tpEntry.Items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    try
+                    {
+                        int Id = tpEntry.Items[i]["User"]["Id"];
+                        var ed = (from l in summary.ListOfItems where l.Id == Id select l).FirstOrDefault();
+                        if (ed == null)
+                            continue;
+
+                        DateTime dateTimeSpentOn = tpEntry.Items[i]["Date"];
+                        decimal timeSpent = tpEntry.Items[i]["Spent"];
+
+                        if ((requestedDate.GetEndOfDay().CompareTo(dateTimeSpentOn) >= 0) && (previousMonday.Date.CompareTo(dateTimeSpentOn) <= 0))
+                        {
+                            (from l in summary.ListOfItems where l.Id == Id select l).First().TotalHoursLogged += timeSpent;
+                        }
+                    }
+                    catch
+                    {
+                        //ignore and move on
+                    }
+                }
+                try
+                {
+                    if (tpEntry.Next != null)
+                        nextTimeLink = tpEntry.Next;
+                    else
+                        nextTimeLink = null;
+                }
+                catch (KeyNotFoundException)
+                {
+                    nextTimeLink = null;
+                }
+            }
+
+            EmployeeDetailComparer dc = new EmployeeDetailComparer();
+            summary.ListOfItems.Sort(dc);
+
+            return summary;
+        }
+
+        public Summary GetEmployeeWebShadowSummary(string date) //mmddyyyy format
+        {
+            Summary s = new Summary(date.StringToDateTime());
+            EmployeeDetail ed = new EmployeeDetail();
+            ed.Name = "Atul Chauhan";
+            ed.TotalHoursLogged = 40;
+            s.ListOfItems.Add(ed);
+            return s;
         }
 
         private static Microsoft.Office.Interop.Outlook.Application GetApplicationObject()
@@ -523,6 +665,63 @@ namespace StandupService
 
     }
 
+    //http://www.drowningintechnicaldebt.com/ShawnWeisfeld/archive/2010/08/22/using-c-4.0-and-dynamic-to-parse-json.aspx
+    public class DynamicJsonObject : DynamicObject
+    {
+        private IDictionary<string, object> Dictionary { get; set; }
+
+        public DynamicJsonObject(IDictionary<string, object> dictionary)
+        {
+            this.Dictionary = dictionary;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = this.Dictionary[binder.Name];
+
+            if (result is IDictionary<string, object>)
+            {
+                result = new DynamicJsonObject(result as IDictionary<string, object>);
+            }
+            else if (result is ArrayList && (result as ArrayList) is IDictionary<string, object>)
+            {
+                result = new List<DynamicJsonObject>((result as ArrayList).ToArray().Select(x => new DynamicJsonObject(x as IDictionary<string, object>)));
+            }
+            else if (result is ArrayList)
+            {
+                result = new List<object>((result as ArrayList).ToArray());
+            }
+
+            return this.Dictionary.ContainsKey(binder.Name);
+        }
+    }
+
+    public class DynamicJsonConverter : JavaScriptConverter
+    {
+        public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
+        {
+            if (dictionary == null)
+                throw new ArgumentNullException("dictionary");
+
+            if (type == typeof(object))
+            {
+                return new DynamicJsonObject(dictionary);
+            }
+
+            return null;
+        }
+
+        public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<Type> SupportedTypes
+        {
+            get { return new ReadOnlyCollection<Type>(new List<Type>(new Type[] { typeof(object) })); }
+        }
+    }
+
     public static class ExtensionMethods
     {
         public static DateTime StringToDateTime(this string strDate)
@@ -543,6 +742,24 @@ namespace StandupService
         public static string DateTimeToString(this DateTime date)
         {
             return date.ToString("MMddyyyy");
+        }
+
+        public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
+        {
+            int diff = dt.DayOfWeek - startOfWeek;
+            if (diff < 0)
+            {
+                diff += 7;
+            }
+
+            return dt.AddDays(-1 * diff).Date;
+        }
+
+        public static DateTime GetEndOfDay(this DateTime date)
+        {
+
+            return date.Date.AddSeconds(86399);
+
         }
 
     }
@@ -648,4 +865,106 @@ namespace StandupService
             set { displayTime = value; }
         }
     }
+
+    [DataContract]
+    public class Summary
+    {
+        public Summary(DateTime d)
+        {
+            listOfItems = new List<EmployeeDetail>();
+            date = d.DateTimeToString();
+            displayDate = d.ToString("D");
+        }
+
+        List<EmployeeDetail> listOfItems = null;
+
+        [DataMember]
+        public List<EmployeeDetail> ListOfItems
+        {
+            get { return listOfItems; }
+            set { listOfItems = value; }
+        }
+
+        string date = string.Empty;
+        [DataMember]
+        public string Date
+        {
+            get { return date; }
+            set { date = value; }
+        }
+
+        string displayDate = string.Empty;
+        [DataMember]
+        public string DisplayDate
+        {
+            get { return displayDate; }
+            internal set { displayDate = value; }
+        }
+    }
+
+    [DataContract]
+    public class EmployeeDetail
+    {
+        string name = string.Empty;
+        [DataMember]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        string email = string.Empty;
+        [DataMember]
+        public string Email
+        {
+            get { return email; }
+            set { email = value; }
+        }
+
+        int id = 0;
+        [DataMember]
+        public int Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        decimal totalHoursLogged = 0;
+        [DataMember]
+        public decimal TotalHoursLogged
+        {
+            get { return totalHoursLogged; }
+            set { totalHoursLogged = value; }
+        }
+    }
+
+    #region IComparer implementation
+
+    /// <summary>
+    /// Comparer helper class.
+    /// Sort in order of time.
+    /// </summary>
+    public class EmployeeDetailComparer : IComparer<EmployeeDetail>
+    {
+        public int Compare(EmployeeDetail o1, EmployeeDetail o2)
+        {
+            EmployeeDetail p1 = o1 as EmployeeDetail;
+            EmployeeDetail p2 = o2 as EmployeeDetail;
+
+            if (p1.TotalHoursLogged < p2.TotalHoursLogged)
+            {
+                return 1;
+            }
+            else if (p1.TotalHoursLogged > p2.TotalHoursLogged)
+            {
+                return -1;
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+    }
+    #endregion
 }
