@@ -570,6 +570,12 @@ namespace StandupService
                         || body.Contains("pto")
                         || subject.Contains("sick")
                         || body.Contains("sick")
+                        || subject.Contains("home")
+                        || body.Contains("home")
+                        || subject.Contains("leaving")
+                        || body.Contains("leaving")
+                        || subject.Contains("today")
+                        || body.Contains("today")
                         )
                     {
                         Debug.WriteLine("Sent: {0} {1} {2}", item.SentOn.ToLongDateString(), item.SenderName, item.Subject);
