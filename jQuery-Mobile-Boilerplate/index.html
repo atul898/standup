@@ -93,11 +93,47 @@
 </head> 
 <body> 
 
-	<div data-role="page" id="mainPage" data-add-back-btn="true">
+	<div data-role="page" id="homePage" data-add-back-btn="true">
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>Yahara Software</h1> 
+<!--            <a href="#homePage" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>-->
+<!--            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-prefetch>FrontDesk</a>-->
+		</div><!-- /header -->
+
+		<div data-role="content">
+            <ul data-role="listview" id="homePageList" >
+			<li><a href="#standupPage">
+				<img src="images/Yahara114x114.png" />
+				<h3>Yahara Standup</h3>
+				<p>Daily email updates.</p>
+			</a></li>
+			<li><a href="#tpPage">
+				<img src="images/working-hard.jpg" />
+				<h3>Target Process Summary</h3>
+				<p>Time in for the week so far.</p>
+			</a></li> 
+			<li><a href="#frondeskPage">
+				<img src="images/Office-Customer-Male-Light-icon.png" />
+				<h3>Front Desk message</h3>
+				<p>This REALLY works! So be cautious.</p>
+			</a></li> 
+			<li><a href="#webshadowPage">
+				<img src="images/ws1.png" />
+				<h3>Web Shadow</h3>
+				<p>Time in for the week so far.</p>
+			</a></li>                                    
+            </ul>
+		</div>
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+	<div data-role="page" id="standupPage" data-add-back-btn="true">
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>Standup</h1> 
-            <a href="/index.html" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>
-            <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-prefetch>Settings</a>
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+<!--            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-prefetch>FrontDesk</a>-->
 		</div><!-- /header -->
 
 		<div data-role="content">
@@ -111,14 +147,13 @@
 	<div data-role="page" id="tpPage" data-add-back-btn="true">
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>TP Summary</h1> 
-            <a href="#tpPage" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>
-            <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-prefetch>Settings</a>
+            <a href="#homePage"  data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+<!--            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-prefetch>FrontDesk</a>-->
 		</div><!-- /header -->
 
 		<div data-role="content">
-				<div data-role="fieldcontain">
-					<label for="calstartday">Some Date</label>
                     <input name="calstartday" type="date" data-role="datebox" id="tpDateBox" data-options='{"mode": "calbox", "calStartDay": 1}' onChange="tpDateValueSet(this)"/>
+                    <br/>
             <ul data-role="listview" id="tpPageList" data-theme="d" data-divider-theme="d"></ul>
 				</div>
 		</div>
@@ -128,11 +163,11 @@
 	</div>
 
 
-    <div data-role="page" id="settingsPage" >
+    <div data-role="page" id="frondeskPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>Settings</h1> 
-            <a href="#mainPage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
-            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>
+        	<h1>FrontDesk</h1> 
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+<!--            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>-->
 		</div><!-- /header -->
 
     <div data-role="content">   
@@ -149,7 +184,7 @@
 			        <label for="radio-choice-3">Internal Conference Room</label>
                     <br />-->
 
-			        <h3>Welcome Message</h3>
+			        <h3>Update welcome message</h3>
                     <p>This text will be displayed on the HDTV display at Yahara frontdesk</p>
 			        <textarea cols="40" rows="8" name="textarea" id="textarea"></textarea>
                <!-- </fieldset>-->
@@ -167,7 +202,7 @@
     <div data-role="page" id="aboutPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>About Us</h1> 
-            <a href="#settingsPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Settings</a>
+            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Settings</a>
 		</div><!-- /header -->
 
     <div data-role="content" user-scalable="yes">   
@@ -175,6 +210,28 @@
             <p>Your browser does not support iframes.</p>
         </iframe>   -->
         <p>&copy; Yahara Software </p>
+    </div><!-- /content -->
+
+<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+    <div data-role="page" id="webshadowPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>Web Shadow</h1> 
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Settings</a>
+		</div><!-- /header -->
+
+    <div data-role="content" user-scalable="yes">   
+<!--        <iframe src="http://www.yaharasoftware.com/TopNavigation/AboutUs.aspx" width="100%" height="100%">
+            <p>Your browser does not support iframes.</p>
+        </iframe>   -->
+        <h6>Although you carefully looked at the icon, Did you still think that this was going to work? :-(</h6>
+        <br/>
+        <h4> WebShadow expertise needed, If you can help talk to Atul</h4>
+        <br/>
+        <p>&copy; Yahara Software</p>
     </div><!-- /content -->
 
 <!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
@@ -201,7 +258,7 @@
 				</div>
 			</form>
 			
-			<a id="changeWelcomeMessage" data-role="button" data-theme="b"  data-inline="true" STYLE="text-decoration:none"><!--href="#settingsPage" data-rel="back"-->
+			<a id="changeWelcomeMessage" data-role="button" data-theme="b"  data-inline="true" STYLE="text-decoration:none"><!--href="#frondeskPage" data-rel="back"-->
             Done
             </a>   
 		</div>
@@ -225,8 +282,8 @@
     <div data-role="page" id="detailPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>Details</h1> 
-            <a href="#mainPage" data-icon="home" data-iconpos="notext" data-direction="reverse" data-rel="back">Home</a>
-            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>
+            <a href="#standupPage" data-icon="home" data-iconpos="notext" data-direction="reverse" data-rel="back">Home</a>
+<!--            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>-->
 		</div><!-- /header -->
 
     <div data-role="content" id="detailPageContent">   

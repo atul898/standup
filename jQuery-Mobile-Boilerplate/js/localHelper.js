@@ -111,10 +111,15 @@ function callGetStandupStatus(selectedDate) {
                 ("0" + (localDateVariable.getMonth() + 1)).slice(-2) + "" +
                 ("0" + localDateVariable.getDate()).slice(-2) + "" +
                 localDateVariable.getFullYear();
-     callGetStandupStatus(selectedDate);
+     //callGetStandupStatus(selectedDate);
 
+     $("#standupPage").live('pageinit', function (event) {
+         if (event.type == "pageinit") {
+             callGetStandupStatus(selectedDate);
+         }
+     });
 
-     $("#mainPage").live('swipeleft swiperight', function (event) {
+     $("#standupPage").live('swipeleft swiperight', function (event) {
          if (event.type == "swiperight") {
              localDateVariable = localDateVariable.addDays(-1);
              var curr_date = localDateVariable.getDate();
@@ -223,11 +228,11 @@ function callGetStandupStatus(selectedDate) {
      $("#popupLoginButton").click(function (event) {
          if (($("un").value == "test") && ($("pass").value == "test")) {
              //$('#popupLogin').dialog('close');
-             //             $.mobile.loadPage('#mainPage',
+             //             $.mobile.loadPage('#standupPage',
              //                        { transition: "slideup",
              //                            reloadPage: true
              //                        });
-             $.mobile.changePage('#mainPage', { transition: "slideup" });
+             $.mobile.changePage('#standupPage', { transition: "slideup" });
          }
          else {
              event.preventDefault();
@@ -261,15 +266,15 @@ function callGetStandupStatus(selectedDate) {
 
      });
 
-//     $('#tpDateBox').datepicker().onchange(function (event) {
-//         var d = $('#tpDateBox').value;
-//     });
-//     $("#tpDateBox").datebox({
-//         onselect: function (dateText) {
-//             //display("Selected date: " + dateText + "; input's current value: " + this.value);
-//             alert("Selected date: " + dateText + "; input's current value: " + this.value);
-//         }
-//     });
+     //     $('#tpDateBox').datepicker().onchange(function (event) {
+     //         var d = $('#tpDateBox').value;
+     //     });
+     //     $("#tpDateBox").datebox({
+     //         onselect: function (dateText) {
+     //             //display("Selected date: " + dateText + "; input's current value: " + this.value);
+     //             alert("Selected date: " + dateText + "; input's current value: " + this.value);
+     //         }
+     //     });
 
  });
 
@@ -281,7 +286,7 @@ function callGetStandupStatus(selectedDate) {
      }
      if (selectObj.selectedIndex == 1) {
          $("#changeWelcomeMessage").fadeTo(500, 1.0);
-         $("#changeWelcomeMessage").attr("href", '#settingsPage');
+         $("#changeWelcomeMessage").attr("href", '#frondeskPage');
          $("#changeWelcomeMessage").attr("data-rel", 'back');
      }
  }
@@ -348,7 +353,7 @@ function callGetStandupStatus(selectedDate) {
 
          //Add the header
          var row = '<li data-role="list-divider" id="dateHeader">' + data.DisplayDate
-                    + '<span class="ui-li-count" id="itemCount">' + data.ListOfItems.length
+                    + '<span class="ui-li-count" id="itemCount">' + 'Hours for the week' //data.ListOfItems.length
                     + '</span></li>'
          $("#tpPageList").append(row);
 
