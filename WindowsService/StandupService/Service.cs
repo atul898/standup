@@ -118,11 +118,11 @@ namespace StandupService
 
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/WelcomeMessage?message={message}")]
-        bool WelcomeMessage(string message);
+        WrappedBool WelcomeMessage(string message);
 
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/ReadCurrentMessage")]
-        string ReadCurrentMessage();
+        WrappedString ReadCurrentMessage();
 
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeTargetProcessSummary?date={date}")]
@@ -197,49 +197,69 @@ namespace StandupService
             return status;
         }
 
-        public bool WelcomeMessage(string message)
+        public WrappedBool WelcomeMessage(string message)
         {
+            WrappedBool b = new WrappedBool();
             try
             {
                 StringBuilder newFile = new StringBuilder();
 
                 string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
-                newFile.Append(message + "\r\n\r\n\r\n\r\n\r\n");
+
+                string[] splitC = { "<br />" };
+                string[] ls = message.Split(splitC, StringSplitOptions.None);
+
+                foreach (string s in ls)
+                {
+                    newFile.Append(s + "\r\n");
+                }
+
+                newFile.Append("\r\n\r\n\r\n\r\n\r\n");
 
                 foreach (string line in file)
                 {
                     newFile.Append(line + "\r\n");
                 }
                 System.IO.File.WriteAllText(@"\\10.111.124.47\c$\RecBoard\Welcome.txt", newFile.ToString());
-                return true;
             }
-            catch(Exception e)
+            catch
             {
-                EventLog.WriteEntry(sSource, "Exception in YaharaEmployeeStatusService" + Environment.NewLine + "Message = " + e.Message
-                    + Environment.NewLine + "StackTrace" + Environment.NewLine + e.StackTrace
-                    , EventLogEntryType.Error, 234);
-                return false;
+                b.Success = false;
+                return b;
             }
+            b.Success = true;
+            return b;
         }
 
-        public string ReadCurrentMessage()
+        public WrappedString ReadCurrentMessage()
         {
+            WrappedString s = new WrappedString();
             StringBuilder returnString = new StringBuilder();
-
-            string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
-
-            int lines = 0;
-            //get first 5 lines
-            foreach (string line in file)
+            try
             {
-                lines++;
-                returnString.Append(line + " ");
-                if (lines == 5)
-                    break;
+                string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
+
+                int lines = 0;
+                //get first 5 lines
+                foreach (string line in file)
+                {
+                    lines++;
+                    line.Replace("  ", " &nbsp;");
+                    returnString.Append(line + "<br>");
+                    if (lines == 5)
+                        break;
+                }
+            }
+            catch
+            {
+                s.Message = "Could not read/retreive welcome message!";
+                return s;
             }
 
-            return returnString.ToString();
+            s.Message = returnString.ToString();
+            return s;
         }
+
 
         public Summary GetEmployeeTargetProcessSummary(string strDate) //mmddyyyy format
         {
@@ -804,7 +824,7 @@ namespace StandupService
         public ProjectInstaller()
         {
             process = new ServiceProcessInstaller();
-            process.Account = ServiceAccount.NetworkService;
+            process.Account = ServiceAccount.LocalSystem;
             service = new ServiceInstaller();
             service.ServiceName = "YaharaStandupService";
             Installers.Add(process);
@@ -812,6 +832,30 @@ namespace StandupService
         }
     }
 
+
+    [DataContract]
+    public class WrappedBool
+    {
+        bool success = false;
+        [DataMember]
+        public bool Success
+        {
+            get { return success; }
+            set { success = value; }
+        }
+    }
+
+    [DataContract]
+    public class WrappedString
+    {
+        string message = string.Empty;
+        [DataMember]
+        public string Message
+        {
+            get { return message; }
+            set { message = value; }
+        }
+    }
 
     [DataContract]
     public class Status

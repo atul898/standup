@@ -1,0 +1,16 @@
+Install Service
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil C:\WebSites\Standup\StandupService\Release\StandupService.exe
+
+UnInstall Service
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil /u C:\WebSites\Standup\StandupService\Release\StandupService.exe
+
+Start Service
+net start YaharaStandupService
+
+Stop Service
+net stop YaharaStandupService
+
+
+
+
+netsh http add urlacl url=http://+:8000/YaharaEmployeeStatusService/ user=yahara\atulc
