@@ -49,7 +49,8 @@
 
     <script type="text/javascript">
         //Global date variable for caching current date
-        var localDateVariable;
+        var localStandupDateVariable;
+        var localTPDateVariable;
     </script>
 
 
@@ -152,11 +153,12 @@
 		</div><!-- /header -->
 
 		<div data-role="content">
-                    <input name="calstartday" type="date" data-role="datebox" id="tpDateBox" data-options='{"mode": "calbox", "calStartDay": 1}' onChange="tpDateValueSet(this)"/>
-                    <br/>
             <ul data-role="listview" id="tpPageList" data-theme="d" data-divider-theme="d"></ul>
-				</div>
-		</div>
+            <br/>
+            <input name="calstartday" type="date" data-role="datebox" id="tpDateBox" data-options='{"mode": "calbox", "calStartDay": 1}' onChange="tpDateValueSet(this)"/>
+            <h5>Choose a date, to view target process summary for the week.</h5>
+        </div>
+	</div>
 <!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
@@ -165,32 +167,25 @@
 
     <div data-role="page" id="frondeskPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>FrontDesk</h1> 
+        	<h1>FrontDesk Message</h1> 
             <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 <!--            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>-->
 		</div><!-- /header -->
 
-    <div data-role="content">   
-<!--			<div data-role="fieldcontain">-->
-<!--			    <fieldset data-role="controlgroup">-->
-<!--			    	<legend>I am interested in: </legend>
-			        <input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1" checked="checked" />
-			        <label for="radio-choice-1">Daily Standup Updates</label>
-
-			        <input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  />
-			        <label for="radio-choice-2">Main Conference Room</label>
-
-			        <input type="radio" name="radio-choice-1" id="radio-choice-3" value="choice-3"  />
-			        <label for="radio-choice-3">Internal Conference Room</label>
-                    <br />-->
-
-			        <h3>Update welcome message</h3>
-                    <p>This text will be displayed on the HDTV display at Yahara frontdesk</p>
-			        <textarea cols="40" rows="8" name="textarea" id="textarea"></textarea>
-               <!-- </fieldset>-->
-				<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true" STYLE="text-decoration:none">Submit</a>
-                <!--STYLE="text-decoration:none"-->
-<!--			</div>-->
+    <div data-role="content">  
+        <h3>Update welcome message</h3>
+        <p>This text is displayed on the HDTV display at Yahara frontdesk</p>
+        <div data-role="collapsible-set">
+        <div data-role="collapsible" data-theme="a" data-content-theme="a">
+            <h3>Current Welcome Message</h3>
+            <div id="currentMessage"></div>
+        </div>
+        <div data-role="collapsible" data-theme="a" data-content-theme="a">
+            <h3>Edit Welcome Message</h3>
+		    <textarea cols="40" rows="5" name="textarea" id="textarea"></textarea>
+			<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true" STYLE="text-decoration:none">Submit</a>
+        </div>
+        </div>
     </div><!-- /content -->
 
 <!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">

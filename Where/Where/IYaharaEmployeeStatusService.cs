@@ -19,7 +19,11 @@ namespace Where
 
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/WelcomeMessage?message={message}")]
-        bool WelcomeMessage(string message);
+        WrappedBool WelcomeMessage(string message);
+
+        [OperationContract]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/ReadCurrentMessage")]
+        WrappedString ReadCurrentMessage();
 
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeTargetProcessSummary?date={date}")]
@@ -28,6 +32,30 @@ namespace Where
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeWebShadowSummary?date={date}")]
         Summary GetEmployeeWebShadowSummary(string date); //mmddyyyy format
+    }
+
+    [DataContract]
+    public class WrappedBool
+    {
+        bool success = false;
+        [DataMember]
+        public bool Success
+        {
+            get { return success; }
+            set { success = value; }
+        }
+    }
+
+    [DataContract]
+    public class WrappedString
+    {
+        string message = string.Empty;
+        [DataMember]
+        public string Message
+        {
+            get { return message; }
+            set { message = value; }
+        }
     }
 
 

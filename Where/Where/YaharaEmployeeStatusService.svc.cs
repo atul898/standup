@@ -40,19 +40,67 @@ namespace Where
             return status;
         }
 
-        public bool WelcomeMessage(string message)
+        public WrappedBool WelcomeMessage(string message)
         {
-            StringBuilder newFile = new StringBuilder();
-
-            string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
-            newFile.Append(message + "\r\n\r\n\r\n\r\n\r\n");
-
-            foreach (string line in file)
+            WrappedBool b = new WrappedBool();
+            try
             {
-                newFile.Append(line + "\r\n");
+                StringBuilder newFile = new StringBuilder();
+
+                string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
+
+                string[] splitC ={"<br />"};
+                string[] ls = message.Split(splitC, StringSplitOptions.None);
+
+                foreach (string s in ls)
+                {
+                    newFile.Append(s + "\r\n");
+                }
+
+                newFile.Append("\r\n\r\n\r\n\r\n\r\n");
+
+                foreach (string line in file)
+                {
+                    newFile.Append(line + "\r\n");
+                }
+                System.IO.File.WriteAllText(@"\\10.111.124.47\c$\RecBoard\Welcome.txt", newFile.ToString());
             }
-            System.IO.File.WriteAllText(@"\\10.111.124.47\c$\RecBoard\Welcome.txt", newFile.ToString());
-            return true;
+            catch
+            {
+                b.Success = false;
+                return b;
+            }
+            b.Success = true;
+            return b;
+        }
+
+        public WrappedString ReadCurrentMessage()
+        {
+            WrappedString s = new WrappedString();
+            StringBuilder returnString = new StringBuilder();
+            try
+            {
+                string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
+
+                int lines = 0;
+                //get first 5 lines
+                foreach (string line in file)
+                {
+                    lines++;
+                    line.Replace("  ", " &nbsp;");
+                    returnString.Append(line + "<br>");
+                    if (lines == 5)
+                        break;
+                }
+            }
+            catch
+            {
+                s.Message = "Could not read/retreive welcome message!";
+                return s;
+            }
+            
+            s.Message = returnString.ToString();
+            return s;
         }
 
         public Summary GetEmployeeTargetProcessSummary(string strDate) //mmddyyyy format

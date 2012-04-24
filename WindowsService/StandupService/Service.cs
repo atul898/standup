@@ -121,6 +121,10 @@ namespace StandupService
         bool WelcomeMessage(string message);
 
         [OperationContract]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/ReadCurrentMessage")]
+        string ReadCurrentMessage();
+
+        [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeTargetProcessSummary?date={date}")]
         Summary GetEmployeeTargetProcessSummary(string date); //mmddyyyy format
 
@@ -216,6 +220,25 @@ namespace StandupService
                     , EventLogEntryType.Error, 234);
                 return false;
             }
+        }
+
+        public string ReadCurrentMessage()
+        {
+            StringBuilder returnString = new StringBuilder();
+
+            string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
+
+            int lines = 0;
+            //get first 5 lines
+            foreach (string line in file)
+            {
+                lines++;
+                returnString.Append(line + " ");
+                if (lines == 5)
+                    break;
+            }
+
+            return returnString.ToString();
         }
 
         public Summary GetEmployeeTargetProcessSummary(string strDate) //mmddyyyy format
