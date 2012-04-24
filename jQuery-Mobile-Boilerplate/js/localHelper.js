@@ -121,9 +121,9 @@ function callGetStandupStatus(selectedDate) {
          if (event.type == "pageshow") {
              $("textarea#textarea").val('');
 
-             var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?"
-             //var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
-             //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage"
+             var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
+             //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?"
+
              $.getJSON(link)
                 .success(
                  function (data) {
@@ -234,9 +234,9 @@ function callGetStandupStatus(selectedDate) {
                 .success(
                  function (data) {
                      if (data == true)
-                         //alert("All Done!");
+                         ; //alert("All Done!");
                      else
-                         //alert("Something is not right!");
+                         ;  //alert("Something is not right!");
                  })
                 .error(
                  function () {
