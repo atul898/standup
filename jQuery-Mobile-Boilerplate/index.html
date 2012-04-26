@@ -17,9 +17,9 @@
 	<!-- jQuery Mobile CSS bits -->
 	<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
 
-	<link type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" rel="stylesheet" /> 
-	<link type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" rel="stylesheet" /> 
-	<link type="text/css" href="http://dev.jtsage.com/jQM-DateBox/css/demos.css" rel="stylesheet" /> 
+	<link type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" rel="stylesheet" />
+	<link type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" rel="stylesheet" />
+	<link type="text/css" href="http://dev.jtsage.com/jQM-DateBox/css/demos.css" rel="stylesheet" />
 
 	<!-- if you have a custom theme, add it here -->
 <!--	<link rel="stylesheet"  href="/themes/jQuery-Mobile-Boilerplate.css" />-->
@@ -51,6 +51,7 @@
         //Global date variable for caching current date
         var localStandupDateVariable;
         var localTPDateVariable;
+        var localWSDateVariable;
     </script>
 
 
@@ -87,16 +88,16 @@
 <!--    <script type="text/javascript">
         $(document).bind("mobileinit", function () {
             $.mobile.page.prototype.options.addBackBtn = true;
-        });    
+        });
 </script>  -->
 
 
-</head> 
-<body> 
+</head>
+<body>
 
 	<div data-role="page" id="homePage" data-add-back-btn="true">
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>Yahara Software</h1> 
+        	<h1>Yahara Software</h1>
 <!--            <a href="#homePage" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>-->
 <!--            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-prefetch>FrontDesk</a>-->
 		</div><!-- /header -->
@@ -112,17 +113,17 @@
 				<img src="images/working-hard.jpg" />
 				<h3>Target Process Summary</h3>
 				<p>Time in for the week so far.</p>
-			</a></li> 
+			</a></li>
 			<li><a href="#frondeskPage">
 				<img src="images/Office-Customer-Male-Light-icon.png" />
 				<h3>Front Desk message</h3>
 				<p>This REALLY works! So be cautious.</p>
-			</a></li> 
-			<li><a href="#webshadowPage">
+			</a></li>
+			<li><a href="#wsPage">
 				<img src="images/ws1.png" />
 				<h3>Web Shadow</h3>
 				<p>Time in for the week so far.</p>
-			</a></li>                                    
+			</a></li>
             </ul>
 		</div>
 <!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
@@ -132,7 +133,7 @@
 
 	<div data-role="page" id="standupPage" data-add-back-btn="true">
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>Standup</h1> 
+        	<h1>Standup</h1>
             <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 <!--            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-prefetch>FrontDesk</a>-->
 		</div><!-- /header -->
@@ -140,16 +141,15 @@
 		<div data-role="content">
             <ul data-role="listview" id="messageList" data-theme="d" data-divider-theme="d"></ul>
 		</div>
-<!--		<div data-role="footer"  data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
 
-	<div data-role="page" id="tpPage" data-add-back-btn="true">
+	<div data-role="page" id="tpPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>TP Summary</h1> 
+        	<h1>TP Summary</h1>
             <a href="#homePage"  data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
-<!--            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-prefetch>FrontDesk</a>-->
 		</div><!-- /header -->
 
 		<div data-role="content">
@@ -164,15 +164,32 @@
 		</div>	-->
 	</div>
 
+    <div data-role="page" id="wsPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>Web Shadow</h1>
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+		</div><!-- /header -->
+
+		<div data-role="content">
+            <ul data-role="listview" id="wsPageList" data-theme="d" data-divider-theme="d"></ul>
+            <br/>
+            <input name="calstartday" type="date" data-role="datebox" id="wsDateBox" data-options='{"mode": "calbox", "calStartDay": 1}' onChange="wsDateValueSet(this)"/>
+            <h5>Choose a date, to view web shadow summary for the week.</h5>
+        </div>
+
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
 
     <div data-role="page" id="frondeskPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>FrontDesk Message</h1> 
+        	<h1>FrontDesk Message</h1>
             <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
             <a href="#pageFrondeskSettings" data-icon="gear" data-iconpos="notext">Settings</a>
 		</div><!-- /header -->
 
-    <div data-role="content">  
+    <div data-role="content">
         <h3>Update welcome message</h3>
         <p>This text is displayed on the HDTV display at Yahara frontdesk</p>
         <div data-role="collapsible-set">
@@ -183,7 +200,7 @@
         <div data-role="collapsible" data-theme="a" data-content-theme="a">
             <h3>New Welcome Message</h3>
 		    <textarea cols="40" rows="5" name="textarea" id="textarea"></textarea>
-			<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true" >Submit</a>
+			<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true">Submit</a>
         </div>
         </div>
     </div><!-- /content -->
@@ -193,13 +210,14 @@
 		</div>	-->
 	</div>
 
+
     <div data-role="page" id="pageFrondeskSettings" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>HDTV Settings</h1> 
+        	<h1>HDTV Settings</h1>
             <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Frondesk</a>
 		</div><!-- /header -->
 
-    <div data-role="content" >   
+    <div data-role="content" >
     	<div data-role="fieldcontain">
             <ul data-role="listview" data-inset="true">
             <li data-role="fieldcontain">
@@ -229,16 +247,17 @@
 
 <!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
-		</div>-->	
+		</div>-->
 	</div>
+
 
     <div data-role="page" id="aboutPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>About Us</h1> 
+        	<h1>About Us</h1>
             <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Settings</a>
 		</div><!-- /header -->
 
-    <div data-role="content" user-scalable="yes">   
+    <div data-role="content" user-scalable="yes">
 <!--        <iframe src="http://www.yaharasoftware.com/TopNavigation/AboutUs.aspx" width="100%" height="100%">
             <p>Your browser does not support iframes.</p>
         </iframe>   -->
@@ -246,28 +265,6 @@
     </div><!-- /content -->
 
 <!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
-			    <p>&copy; Yahara Software </p>
-		</div>	-->
-	</div>
-
-    <div data-role="page" id="webshadowPage" >
-		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>Web Shadow</h1> 
-            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
-		</div><!-- /header -->
-
-    <div data-role="content" user-scalable="yes">   
-<!--        <iframe src="http://www.yaharasoftware.com/TopNavigation/AboutUs.aspx" width="100%" height="100%">
-            <p>Your browser does not support iframes.</p>
-        </iframe>   -->
-        <h6>Although you carefully looked at the icon, Did you still think that this was going to work? :-)</h6>
-        <br/>
-        <h4> WebShadow expertise needed, If you can help, Do talk with Atul. Thanks.</h4>
-        <br/>
-        <p>&copy; Yahara Software</p>
-    </div><!-- /content -->
-
-<!--		<div data-role="footer"  data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
@@ -280,7 +277,7 @@
 		<div data-role="content" data-theme="d">
 			<h2>Are you sure?</h2>
 			<p>The HGTV display on frontdesk will be changed to reflect your text.</p>
-				
+
 			<form action="#" method="get">
 				<div data-role="fieldcontain">
 					<!--<label for="sliderYesNo">Swipe here:</label>-->
@@ -290,10 +287,10 @@
 					</select>
 				</div>
 			</form>
-			
+
 			<a id="changeWelcomeMessage" data-role="button" data-theme="b"  data-inline="true" STYLE="text-decoration:none"><!--href="#frondeskPage" data-rel="back"-->
             Done
-            </a>   
+            </a>
 		</div>
 	</div>
 
@@ -306,7 +303,7 @@
 
 		          <label for="pw" class="ui-hidden-accessible">Password:</label>
 		          <input type="password" name="pw" id="pass" value="" placeholder="password" data-theme="a" />
-		
+
 		    	  <button id="popupLoginButton" type="submit" data-theme="b" >Sign in</button>
 				</div>
 			</form>
@@ -314,14 +311,14 @@
 
     <div data-role="page" id="detailPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>Details</h1> 
+        	<h1>Details</h1>
             <a href="#" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-rel="back">Back</a>
 <!--            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>-->
 		</div><!-- /header -->
 
-    <div data-role="content" id="detailPageContent">   
+    <div data-role="content" id="detailPageContent">
         <ul id="detailPageul" data-role="listview" data-theme="d" data-divider-theme="d">
-                    
+
         </ul>
 <!--<ul data-role="listview" id="Ul1" data-theme="d" data-divider-theme="d"></ul>-->
     </div><!-- /content -->

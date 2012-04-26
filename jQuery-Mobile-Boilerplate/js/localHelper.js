@@ -212,6 +212,39 @@ function callGetStandupStatus(selectedDate) {
      });
 
 
+     $("#wsPage").live('swipeleft swiperight', function (event) {
+         if (typeof localWSDateVariable === "undefined") {
+             event.preventDefault();
+             return;
+         }
+         if (event.type == "swiperight") {
+             localWSDateVariable = localWSDateVariable.addDays(-1);
+             var curr_date = localWSDateVariable.getDate();
+             var curr_month = localWSDateVariable.getMonth();
+             var curr_year = localWSDateVariable.getFullYear();
+             var selectedDate =
+                        localWSDateVariable.getFullYear() + "-" +
+                        ("0" + (localWSDateVariable.getMonth() + 1)).slice(-2) + "-" +
+                        ("0" + localWSDateVariable.getDate()).slice(-2);
+             $("input#wsDateBox").val(selectedDate);
+             wsDateValueSet($("input#wsDateBox")[0]);
+         }
+         if (event.type == "swipeleft") {
+             localWSDateVariable = localWSDateVariable.addDays(1);
+             var curr_date = localWSDateVariable.getDate();
+             var curr_month = localWSDateVariable.getMonth();
+             var curr_year = localWSDateVariable.getFullYear();
+             var selectedDate =
+                        localWSDateVariable.getFullYear() + "-" +
+                        ("0" + (localWSDateVariable.getMonth() + 1)).slice(-2) + "-" +
+                        ("0" + localWSDateVariable.getDate()).slice(-2);
+             $("input#wsDateBox").val(selectedDate);
+             wsDateValueSet($("input#wsDateBox")[0]);
+         }
+         event.preventDefault();
+     });
+
+
      $("#confirmSubmit").click(function (event) {
          $("#sliderYesNo")[0].selectedIndex == 0;
          $("#changeWelcomeMessage").fadeTo(0, 0.5);
@@ -348,6 +381,18 @@ function callGetStandupStatus(selectedDate) {
      callGetEmployeeTargetProcessSummary(dateInNeededFormat);
  }
 
+
+ function wsDateValueSet(obj) {
+     var dateChosen = obj.value;
+     var dateInNeededFormat = dateChosen.substring(5, 7) + dateChosen.substring(8, 10) + dateChosen.substring(0, 4);
+     //localWSDateVariable = new Date(dateChosen.substring(0, 4), dateChosen.substring(5, 7), dateChosen.substring(8, 10),0,0,0);
+     localWSDateVariable = new Date();
+     localWSDateVariable.setDate(dateChosen.substring(8, 10));
+     localWSDateVariable.setMonth(dateChosen.substring(5, 7) - 1);
+     localWSDateVariable.setFullYear(dateChosen.substring(0, 4))
+     callGetEmployeeWebShadowSummary(dateInNeededFormat);
+ }
+
  function callGetEmployeeTargetProcessSummary(selectedDate) {
 
      //Clear list
@@ -428,6 +473,74 @@ function callGetStandupStatus(selectedDate) {
          $("#tpPageList").append(row);
 
          $("#tpPageList").listview('refresh');
+     })
+
+    .complete(
+     function () {
+         //alert("complete");
+     });
+ }
+
+ function callGetEmployeeWebShadowSummary(selectedDate) {
+
+     //Clear list
+     $("#wsPageList").empty();
+
+     //Add the 'Loading' header
+     var row = '<li data-role="list-divider">' + 'Contacting WebShadow Server....' + '</li>';
+     $("#wsPageList").append(row);
+
+     $("#wsPageList").listview('refresh');
+
+     var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
+     //var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
+
+     $.getJSON(link)
+    .success(
+     function (data) {
+
+         $("ul").fadeTo(0, 0.0);
+
+         //Log
+         console.log(data.Date);
+
+         //Clear list
+         $("#wsPageList").empty();
+
+         //Add the header
+         var row = '<li data-role="list-divider" id="dateHeader">'
+                    + data.DisplayDate
+                    + '<span class="ui-li-count" id="itemCount">' + 'Hours for the week' //data.ListOfItems.length
+                    + '</span></li>'
+         $("#wsPageList").append(row);
+
+         for (var i = 0; i < data.ListOfItems.length; i++) {
+             console.log(data.ListOfItems[i].Email);
+
+             var row = '<li>'
+             + data.ListOfItems[i].Name
+             + '<span class="ui-li-count">'
+             + data.ListOfItems[i].TotalHoursLogged
+             + '</span></li>';
+
+             $("#wsPageList").append(row);
+         }
+
+         $("#wsPageList").listview('refresh');
+         $("ul").fadeTo(100, 0.1);
+         $("ul").fadeTo(500, 1.0);
+     })
+
+    .error(
+     function () {
+         //Clear list
+         $("#wsPageList").empty();
+
+         //Add the header
+         var row = '<li data-role="list-divider">' + 'Err! Please try again later.' + '</li>';
+         $("#wsPageList").append(row);
+
+         $("#wsPageList").listview('refresh');
      })
 
     .complete(
