@@ -3,3 +3,19 @@
 	css/custom.css
 */
 
+
+div.ui-slider-switch {
+    position: absolute;
+    right: 0 ;
+    width: 6em ;
+}
+
+/*
+a:visited, span.MsoHyperlinkFollowed {
+color: white;
+}
+
+a:link, span.MsoHyperlink {
+color: white;
+}
+*/

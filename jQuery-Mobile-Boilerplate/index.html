@@ -125,7 +125,7 @@
 			</a></li>                                    
             </ul>
 		</div>
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
@@ -140,7 +140,7 @@
 		<div data-role="content">
             <ul data-role="listview" id="messageList" data-theme="d" data-divider-theme="d"></ul>
 		</div>
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer"  data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
@@ -159,7 +159,7 @@
             <h5>Choose a date, to view target process summary for the week.</h5>
         </div>
 	</div>
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
@@ -169,7 +169,7 @@
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>FrontDesk Message</h1> 
             <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
-<!--            <a href="#aboutPage" data-icon="info" data-iconpos="notext" data-prefetch>aboutPage</a>-->
+            <a href="#pageFrondeskSettings" data-icon="gear" data-iconpos="notext">Settings</a>
 		</div><!-- /header -->
 
     <div data-role="content">  
@@ -183,16 +183,54 @@
         <div data-role="collapsible" data-theme="a" data-content-theme="a">
             <h3>New Welcome Message</h3>
 		    <textarea cols="40" rows="5" name="textarea" id="textarea"></textarea>
-			<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true" STYLE="text-decoration:none">Submit</a>
+			<a id="confirmSubmit" href="#confirmPopupPage" data-role="button" data-rel="dialog" data-transition="flip" data-inline="true" >Submit</a>
         </div>
         </div>
     </div><!-- /content -->
 
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
 
+    <div data-role="page" id="pageFrondeskSettings" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>HDTV Settings</h1> 
+            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Frondesk</a>
+		</div><!-- /header -->
+
+    <div data-role="content" >   
+    	<div data-role="fieldcontain">
+            <ul data-role="listview" data-inset="true">
+            <li data-role="fieldcontain">
+			<label for="slider2">Auto update (1/2 hour):</label>
+			<select name="slider2" id="slider2" data-role="slider" >
+				<option value="off">Off</option>
+				<option value="on">On</option>
+			</select>
+            </li>
+            </ul>
+		</div>
+
+		<div data-role="fieldcontain">
+			<fieldset data-role="controlgroup">
+			    <legend>Choose source:</legend>
+			        <input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1" checked="checked" />
+			        <label for="radio-choice-1">Meeting Subject</label>
+
+			        <input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  />
+			        <label for="radio-choice-2">Meeting Message</label>
+
+			</fieldset>
+		</div>
+
+
+    </div><!-- /content -->
+
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>-->	
+	</div>
 
     <div data-role="page" id="aboutPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
@@ -207,7 +245,7 @@
         <p>&copy; Yahara Software </p>
     </div><!-- /content -->
 
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
@@ -229,7 +267,7 @@
         <p>&copy; Yahara Software</p>
     </div><!-- /content -->
 
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer"  data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
@@ -288,7 +326,7 @@
 <!--<ul data-role="listview" id="Ul1" data-theme="d" data-divider-theme="d"></ul>-->
     </div><!-- /content -->
 
-<!--		<div data-role="footer" data-theme="c" data-position="fixed" data-fullscreen="true">
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
 	</div>
