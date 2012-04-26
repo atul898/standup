@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahara.SchedulerService", "Yahara.SchedulerService\Yahara.SchedulerService.csproj", "{97416EF6-33B5-4E75-817F-C5774E6D3F2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahara.SchedulerModel", "Yahara.SchedulerModel\Yahara.SchedulerModel.csproj", "{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahara.Scheduler.Contracts", "Yahara.Scheduler.Contracts\Yahara.Scheduler.Contracts.csproj", "{20E57B1C-311F-4975-9AF3-411AB9F6D47C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97416EF6-33B5-4E75-817F-C5774E6D3F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97416EF6-33B5-4E75-817F-C5774E6D3F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97416EF6-33B5-4E75-817F-C5774E6D3F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97416EF6-33B5-4E75-817F-C5774E6D3F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
