@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Collections;
+using Yahara.Scheduler.Contracts.Scheduler;
 
 namespace Where
 {
@@ -32,6 +33,16 @@ namespace Where
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeWebShadowSummary?date={date}")]
         Summary GetEmployeeWebShadowSummary(string date); //mmddyyyy format
+
+        /// <summary>
+        /// Returns an object graph representing resource assignments over a date range.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        //[OperationContract]
+        //[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetForecast?startdate={start}&enddate={end}")]
+        ForecastSummary GetForecast(string start, string end); //mmddyyyy format
     }
 
     [DataContract]

@@ -1,0 +1,648 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SchedulingModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="SchedulingModelStoreContainer">
+          <EntitySet Name="mpvw_Project" EntityType="SchedulingModel.Store.mpvw_Project" store:Type="Views" store:Schema="dbo" store:Name="mpvw_Project">
+            <DefiningQuery>SELECT 
+      [mpvw_Project].[RecordType] AS [RecordType], 
+      [mpvw_Project].[Sequence] AS [Sequence], 
+      [mpvw_Project].[ShadowCID] AS [ShadowCID], 
+      [mpvw_Project].[ShadowCLID] AS [ShadowCLID], 
+      [mpvw_Project].[ShadowPID] AS [ShadowPID], 
+      [mpvw_Project].[Status] AS [Status], 
+      [mpvw_Project].[Name] AS [Name], 
+      [mpvw_Project].[UseACL] AS [UseACL], 
+      [mpvw_Project].[ProjectParent] AS [ProjectParent], 
+      [mpvw_Project].[SubProjectID1] AS [SubProjectID1], 
+      [mpvw_Project].[SubProjectID2] AS [SubProjectID2], 
+      [mpvw_Project].[SubProjectID3] AS [SubProjectID3], 
+      [mpvw_Project].[SubProjectID4] AS [SubProjectID4], 
+      [mpvw_Project].[SubProjectID5] AS [SubProjectID5], 
+      [mpvw_Project].[SubProjectID6] AS [SubProjectID6], 
+      [mpvw_Project].[SubProjectID7] AS [SubProjectID7], 
+      [mpvw_Project].[SubProjectID8] AS [SubProjectID8], 
+      [mpvw_Project].[ShadowDID] AS [ShadowDID], 
+      [mpvw_Project].[ProjStatusShadowCID] AS [ProjStatusShadowCID], 
+      [mpvw_Project].[ProjectStatusID] AS [ProjectStatusID], 
+      [mpvw_Project].[RecordStatus] AS [RecordStatus], 
+      [mpvw_Project].[Visible] AS [Visible], 
+      [mpvw_Project].[ProjectTrackingNumber] AS [ProjectTrackingNumber], 
+      [mpvw_Project].[MPProjectID] AS [MPProjectID], 
+      [mpvw_Project].[MPApplicationID] AS [MPApplicationID], 
+      [mpvw_Project].[EstimatedCompleteDate] AS [EstimatedCompleteDate], 
+      [mpvw_Project].[EstimatedDuration] AS [EstimatedDuration], 
+      [mpvw_Project].[ProjectManager] AS [ProjectManager], 
+      [mpvw_Project].[Billable] AS [Billable], 
+      [mpvw_Project].[WorkCategory] AS [WorkCategory], 
+      [mpvw_Project].[BillingType] AS [BillingType], 
+      [mpvw_Project].[RateCatID] AS [RateCatID], 
+      [mpvw_Project].[AccruedUnits] AS [AccruedUnits], 
+      [mpvw_Project].[EstimatedUnitsMax] AS [EstimatedUnitsMax], 
+      [mpvw_Project].[NoEntryOnMax] AS [NoEntryOnMax], 
+      [mpvw_Project].[DecrementType] AS [DecrementType], 
+      [mpvw_Project].[Milestone] AS [Milestone], 
+      [mpvw_Project].[UtilQual1] AS [UtilQual1], 
+      [mpvw_Project].[UtilQual2] AS [UtilQual2], 
+      [mpvw_Project].[UtilQual3] AS [UtilQual3], 
+      [mpvw_Project].[UtilQual4] AS [UtilQual4], 
+      [mpvw_Project].[AddPay1] AS [AddPay1], 
+      [mpvw_Project].[AddPay2] AS [AddPay2], 
+      [mpvw_Project].[AddPay3] AS [AddPay3], 
+      [mpvw_Project].[AddPay4] AS [AddPay4]
+      FROM [dbo].[mpvw_Project] AS [mpvw_Project]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="mpvw_SchedulerView" EntityType="SchedulingModel.Store.mpvw_SchedulerView" store:Type="Views" store:Schema="dbo" store:Name="mpvw_SchedulerView">
+            <DefiningQuery>SELECT 
+      [mpvw_SchedulerView].[RS_ForecastID] AS [RS_ForecastID], 
+      [mpvw_SchedulerView].[ForecastHours] AS [ForecastHours], 
+      [mpvw_SchedulerView].[DisplayName] AS [DisplayName], 
+      [mpvw_SchedulerView].[UserID] AS [UserID], 
+      [mpvw_SchedulerView].[EmployeeID] AS [EmployeeID], 
+      [mpvw_SchedulerView].[FirstName] AS [FirstName], 
+      [mpvw_SchedulerView].[LastName] AS [LastName], 
+      [mpvw_SchedulerView].[EmailAddress] AS [EmailAddress], 
+      [mpvw_SchedulerView].[ClientName] AS [ClientName], 
+      [mpvw_SchedulerView].[ClientID] AS [ClientID], 
+      [mpvw_SchedulerView].[ProjectID] AS [ProjectID], 
+      [mpvw_SchedulerView].[ProjectName] AS [ProjectName], 
+      [mpvw_SchedulerView].[Week] AS [Week], 
+      [mpvw_SchedulerView].[AppProjectID] AS [AppProjectID], 
+      [mpvw_SchedulerView].[EstimatedDuration] AS [EstimatedDuration], 
+      [mpvw_SchedulerView].[Billable] AS [Billable]
+      FROM [dbo].[mpvw_SchedulerView] AS [mpvw_SchedulerView]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="mpvw_TimeEntry" EntityType="SchedulingModel.Store.mpvw_TimeEntry" store:Type="Views" store:Schema="dbo" store:Name="mpvw_TimeEntry">
+            <DefiningQuery>SELECT 
+      [mpvw_TimeEntry].[ShadowCID] AS [ShadowCID], 
+      [mpvw_TimeEntry].[ShadowCLID] AS [ShadowCLID], 
+      [mpvw_TimeEntry].[ShadowPID] AS [ShadowPID], 
+      [mpvw_TimeEntry].[RecordID] AS [RecordID], 
+      [mpvw_TimeEntry].[EntryTime] AS [EntryTime], 
+      [mpvw_TimeEntry].[EntryDate] AS [EntryDate], 
+      [mpvw_TimeEntry].[H1] AS [H1], 
+      [mpvw_TimeEntry].[H2] AS [H2], 
+      [mpvw_TimeEntry].[H3] AS [H3], 
+      [mpvw_TimeEntry].[H4] AS [H4], 
+      [mpvw_TimeEntry].[H5] AS [H5], 
+      [mpvw_TimeEntry].[H6] AS [H6], 
+      [mpvw_TimeEntry].[H7] AS [H7], 
+      [mpvw_TimeEntry].[H8] AS [H8], 
+      [mpvw_TimeEntry].[EmployeeID] AS [EmployeeID]
+      FROM [dbo].[mpvw_TimeEntry] AS [mpvw_TimeEntry]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ypvw_ClientMaster_WebShadow" EntityType="SchedulingModel.Store.ypvw_ClientMaster_WebShadow" store:Type="Views" store:Schema="dbo" store:Name="ypvw_ClientMaster_WebShadow">
+            <DefiningQuery>SELECT 
+      [ypvw_ClientMaster_WebShadow].[ShadowCID] AS [ShadowCID], 
+      [ypvw_ClientMaster_WebShadow].[ShadowCLID] AS [ShadowCLID], 
+      [ypvw_ClientMaster_WebShadow].[ShadowDID] AS [ShadowDID], 
+      [ypvw_ClientMaster_WebShadow].[Active] AS [Active], 
+      [ypvw_ClientMaster_WebShadow].[Status] AS [Status], 
+      [ypvw_ClientMaster_WebShadow].[Name] AS [Name], 
+      [ypvw_ClientMaster_WebShadow].[Description] AS [Description], 
+      [ypvw_ClientMaster_WebShadow].[Last] AS [Last], 
+      [ypvw_ClientMaster_WebShadow].[CompanyFileID] AS [CompanyFileID], 
+      [ypvw_ClientMaster_WebShadow].[VerifiedDate] AS [VerifiedDate], 
+      [ypvw_ClientMaster_WebShadow].[VerifiedBy] AS [VerifiedBy], 
+      [ypvw_ClientMaster_WebShadow].[BaseCompany] AS [BaseCompany], 
+      [ypvw_ClientMaster_WebShadow].[NoCut] AS [NoCut], 
+      [ypvw_ClientMaster_WebShadow].[UseACL] AS [UseACL], 
+      [ypvw_ClientMaster_WebShadow].[LocaleID] AS [LocaleID], 
+      [ypvw_ClientMaster_WebShadow].[Email] AS [Email]
+      FROM [dbo].[ypvw_ClientMaster_WebShadow] AS [ypvw_ClientMaster_WebShadow]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'ResourceScheduler.dbo.mpvw_Project' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="mpvw_Project">
+          <Key>
+            <PropertyRef Name="ShadowCID" />
+            <PropertyRef Name="ShadowCLID" />
+            <PropertyRef Name="ShadowPID" />
+            <PropertyRef Name="UseACL" />
+            <PropertyRef Name="SubProjectID1" />
+            <PropertyRef Name="SubProjectID2" />
+            <PropertyRef Name="SubProjectID3" />
+            <PropertyRef Name="SubProjectID4" />
+            <PropertyRef Name="SubProjectID5" />
+            <PropertyRef Name="SubProjectID6" />
+            <PropertyRef Name="SubProjectID7" />
+            <PropertyRef Name="SubProjectID8" />
+            <PropertyRef Name="ShadowDID" />
+            <PropertyRef Name="ProjStatusShadowCID" />
+            <PropertyRef Name="ProjectStatusID" />
+            <PropertyRef Name="RecordStatus" />
+            <PropertyRef Name="Visible" />
+            <PropertyRef Name="MPProjectID" />
+            <PropertyRef Name="MPApplicationID" />
+            <PropertyRef Name="Billable" />
+            <PropertyRef Name="NoEntryOnMax" />
+          </Key>
+          <Property Name="RecordType" Type="int" />
+          <Property Name="Sequence" Type="int" />
+          <Property Name="ShadowCID" Type="int" Nullable="false" />
+          <Property Name="ShadowCLID" Type="int" Nullable="false" />
+          <Property Name="ShadowPID" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="UseACL" Type="bit" Nullable="false" />
+          <Property Name="ProjectParent" Type="int" />
+          <Property Name="SubProjectID1" Type="int" Nullable="false" />
+          <Property Name="SubProjectID2" Type="int" Nullable="false" />
+          <Property Name="SubProjectID3" Type="int" Nullable="false" />
+          <Property Name="SubProjectID4" Type="int" Nullable="false" />
+          <Property Name="SubProjectID5" Type="int" Nullable="false" />
+          <Property Name="SubProjectID6" Type="int" Nullable="false" />
+          <Property Name="SubProjectID7" Type="int" Nullable="false" />
+          <Property Name="SubProjectID8" Type="int" Nullable="false" />
+          <Property Name="ShadowDID" Type="int" Nullable="false" />
+          <Property Name="ProjStatusShadowCID" Type="int" Nullable="false" />
+          <Property Name="ProjectStatusID" Type="int" Nullable="false" />
+          <Property Name="RecordStatus" Type="int" Nullable="false" />
+          <Property Name="Visible" Type="bit" Nullable="false" />
+          <Property Name="ProjectTrackingNumber" Type="int" />
+          <Property Name="MPProjectID" Type="int" Nullable="false" />
+          <Property Name="MPApplicationID" Type="int" Nullable="false" />
+          <Property Name="EstimatedCompleteDate" Type="datetime" />
+          <Property Name="EstimatedDuration" Type="int" />
+          <Property Name="ProjectManager" Type="varchar" />
+          <Property Name="Billable" Type="bit" Nullable="false" />
+          <Property Name="WorkCategory" Type="varchar" MaxLength="100" />
+          <Property Name="BillingType" Type="varchar" MaxLength="75" />
+          <Property Name="RateCatID" Type="int" />
+          <Property Name="AccruedUnits" Type="int" />
+          <Property Name="EstimatedUnitsMax" Type="int" />
+          <Property Name="NoEntryOnMax" Type="bit" Nullable="false" />
+          <Property Name="DecrementType" Type="int" />
+          <Property Name="Milestone" Type="int" />
+          <Property Name="UtilQual1" Type="smallint" />
+          <Property Name="UtilQual2" Type="smallint" />
+          <Property Name="UtilQual3" Type="smallint" />
+          <Property Name="UtilQual4" Type="smallint" />
+          <Property Name="AddPay1" Type="int" />
+          <Property Name="AddPay2" Type="int" />
+          <Property Name="AddPay3" Type="int" />
+          <Property Name="AddPay4" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'ResourceScheduler.dbo.mpvw_SchedulerView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="mpvw_SchedulerView">
+          <Key>
+            <PropertyRef Name="RS_ForecastID" />
+            <PropertyRef Name="ForecastHours" />
+            <PropertyRef Name="EmployeeID" />
+            <PropertyRef Name="ClientID" />
+            <PropertyRef Name="ProjectID" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="Week" />
+            <PropertyRef Name="AppProjectID" />
+            <PropertyRef Name="Billable" />
+          </Key>
+          <Property Name="RS_ForecastID" Type="int" Nullable="false" />
+          <Property Name="ForecastHours" Type="decimal" Nullable="false" />
+          <Property Name="DisplayName" Type="varchar" MaxLength="62" />
+          <Property Name="UserID" Type="varchar" />
+          <Property Name="EmployeeID" Type="varchar" Nullable="false" MaxLength="22" />
+          <Property Name="FirstName" Type="varchar" MaxLength="25" />
+          <Property Name="LastName" Type="varchar" MaxLength="35" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="75" />
+          <Property Name="ClientName" Type="varchar" MaxLength="50" />
+          <Property Name="ClientID" Type="int" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="ProjectName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Week" Type="datetime" Nullable="false" />
+          <Property Name="AppProjectID" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EstimatedDuration" Type="int" />
+          <Property Name="Billable" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'ResourceScheduler.dbo.mpvw_TimeEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="mpvw_TimeEntry">
+          <Key>
+            <PropertyRef Name="ShadowCID" />
+            <PropertyRef Name="ShadowCLID" />
+            <PropertyRef Name="ShadowPID" />
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Name="ShadowCID" Type="int" Nullable="false" />
+          <Property Name="ShadowCLID" Type="int" Nullable="false" />
+          <Property Name="ShadowPID" Type="int" Nullable="false" />
+          <Property Name="RecordID" Type="varchar" />
+          <Property Name="EntryTime" Type="float" />
+          <Property Name="EntryDate" Type="datetime" />
+          <Property Name="H1" Type="int" />
+          <Property Name="H2" Type="int" />
+          <Property Name="H3" Type="int" />
+          <Property Name="H4" Type="int" />
+          <Property Name="H5" Type="int" />
+          <Property Name="H6" Type="int" />
+          <Property Name="H7" Type="int" />
+          <Property Name="H8" Type="int" />
+          <Property Name="EmployeeID" Type="varchar" Nullable="false" MaxLength="22" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'ResourceScheduler.dbo.ypvw_ClientMaster_WebShadow' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="ypvw_ClientMaster_WebShadow">
+          <Key>
+            <PropertyRef Name="ShadowCID" />
+            <PropertyRef Name="ShadowCLID" />
+            <PropertyRef Name="ShadowDID" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="UseACL" />
+            <PropertyRef Name="LocaleID" />
+          </Key>
+          <Property Name="ShadowCID" Type="int" Nullable="false" />
+          <Property Name="ShadowCLID" Type="int" Nullable="false" />
+          <Property Name="ShadowDID" Type="int" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="50" />
+          <Property Name="Last" Type="int" />
+          <Property Name="CompanyFileID" Type="varchar" MaxLength="50" />
+          <Property Name="VerifiedDate" Type="datetime" />
+          <Property Name="VerifiedBy" Type="varchar" MaxLength="12" />
+          <Property Name="BaseCompany" Type="int" />
+          <Property Name="NoCut" Type="int" />
+          <Property Name="UseACL" Type="bit" Nullable="false" />
+          <Property Name="LocaleID" Type="int" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <Function Name="yps_GetTimeEntriesInRange" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EmployeeID" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SchedulingModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="SchedulingEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="SchedulerView" EntityType="SchedulingModel.SchedulerView" />
+          <EntitySet Name="ProjectView" EntityType="SchedulingModel.ProjectView" />
+          <EntitySet Name="TimeEntryView" EntityType="SchedulingModel.TimeEntryView" />
+          <FunctionImport Name="yps_GetTimeEntriesInRange" ReturnType="Collection(SchedulingModel.RangedTimeEntry)">
+            <Parameter Name="EmployeeID" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="ClientView" EntityType="SchedulingModel.ClientView" />
+        </EntityContainer>
+        <EntityType Name="SchedulerView">
+          <Key>
+            <PropertyRef Name="RS_ForecastID" />
+            <PropertyRef Name="ForecastHours" />
+            <PropertyRef Name="EmployeeID" />
+            <PropertyRef Name="ClientID" />
+            <PropertyRef Name="ProjectID" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="Week" />
+            <PropertyRef Name="AppProjectID" />
+            <PropertyRef Name="Billable" />
+          </Key>
+          <Property Name="RS_ForecastID" Type="Int32" Nullable="false" />
+          <Property Name="ForecastHours" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="DisplayName" Type="String" MaxLength="62" Unicode="false" FixedLength="false" />
+          <Property Name="UserID" Type="String" MaxLength="8000" Unicode="false" FixedLength="false" />
+          <Property Name="EmployeeID" Type="String" Nullable="false" MaxLength="22" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" MaxLength="25" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="35" Unicode="false" FixedLength="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="75" Unicode="false" FixedLength="false" />
+          <Property Name="ClientName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="ClientID" Type="Int32" Nullable="false" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="ProjectName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Type="DateTime" Name="Week" Nullable="false" />
+          <Property Type="String" Name="AppProjectID" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="EstimatedDuration" />
+          <Property Type="Boolean" Name="Billable" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectView">
+          <Key>
+            <PropertyRef Name="ShadowCID" />
+            <PropertyRef Name="ShadowCLID" />
+            <PropertyRef Name="ShadowPID" />
+            <PropertyRef Name="UseACL" />
+            <PropertyRef Name="SubProjectID1" />
+            <PropertyRef Name="SubProjectID2" />
+            <PropertyRef Name="SubProjectID3" />
+            <PropertyRef Name="SubProjectID4" />
+            <PropertyRef Name="SubProjectID5" />
+            <PropertyRef Name="SubProjectID6" />
+            <PropertyRef Name="SubProjectID7" />
+            <PropertyRef Name="SubProjectID8" />
+            <PropertyRef Name="ShadowDID" />
+            <PropertyRef Name="ProjStatusShadowCID" />
+            <PropertyRef Name="ProjectStatusID" />
+            <PropertyRef Name="RecordStatus" />
+            <PropertyRef Name="Visible" />
+            <PropertyRef Name="MPProjectID" />
+            <PropertyRef Name="MPApplicationID" />
+            <PropertyRef Name="Billable" />
+            <PropertyRef Name="NoEntryOnMax" />
+          </Key>
+          <Property Type="Int32" Name="RecordType" />
+          <Property Type="Int32" Name="Sequence" />
+          <Property Type="Int32" Name="ShadowCID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowCLID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowPID" Nullable="false" />
+          <Property Type="Int32" Name="Status" />
+          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="UseACL" Nullable="false" />
+          <Property Type="Int32" Name="ProjectParent" />
+          <Property Type="Int32" Name="SubProjectID1" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID2" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID3" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID4" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID5" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID6" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID7" Nullable="false" />
+          <Property Type="Int32" Name="SubProjectID8" Nullable="false" />
+          <Property Type="Int32" Name="ShadowDID" Nullable="false" />
+          <Property Type="Int32" Name="ProjStatusShadowCID" Nullable="false" />
+          <Property Type="Int32" Name="ProjectStatusID" Nullable="false" />
+          <Property Type="Int32" Name="RecordStatus" Nullable="false" />
+          <Property Type="Boolean" Name="Visible" Nullable="false" />
+          <Property Type="Int32" Name="ProjectTrackingNumber" />
+          <Property Type="Int32" Name="MPProjectID" Nullable="false" />
+          <Property Type="Int32" Name="MPApplicationID" Nullable="false" />
+          <Property Type="DateTime" Name="EstimatedCompleteDate" />
+          <Property Type="Int32" Name="EstimatedDuration" />
+          <Property Type="String" Name="ProjectManager" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="Billable" Nullable="false" />
+          <Property Type="String" Name="WorkCategory" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="BillingType" MaxLength="75" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="RateCatID" />
+          <Property Type="Int32" Name="AccruedUnits" />
+          <Property Type="Int32" Name="EstimatedUnitsMax" />
+          <Property Type="Boolean" Name="NoEntryOnMax" Nullable="false" />
+          <Property Type="Int32" Name="DecrementType" />
+          <Property Type="Int32" Name="Milestone" />
+          <Property Type="Int16" Name="UtilQual1" />
+          <Property Type="Int16" Name="UtilQual2" />
+          <Property Type="Int16" Name="UtilQual3" />
+          <Property Type="Int16" Name="UtilQual4" />
+          <Property Type="Int32" Name="AddPay1" />
+          <Property Type="Int32" Name="AddPay2" />
+          <Property Type="Int32" Name="AddPay3" />
+          <Property Type="Int32" Name="AddPay4" />
+        </EntityType>
+        <EntityType Name="TimeEntryView">
+          <Key>
+            <PropertyRef Name="ShadowCID" />
+            <PropertyRef Name="ShadowCLID" />
+            <PropertyRef Name="ShadowPID" />
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Type="Int32" Name="ShadowCID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowCLID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowPID" Nullable="false" />
+          <Property Type="String" Name="RecordID" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="Double" Name="EntryTime" />
+          <Property Type="DateTime" Name="EntryDate" />
+          <Property Type="Int32" Name="H1" />
+          <Property Type="Int32" Name="H2" />
+          <Property Type="Int32" Name="H3" />
+          <Property Type="Int32" Name="H4" />
+          <Property Type="Int32" Name="H5" />
+          <Property Type="Int32" Name="H6" />
+          <Property Type="Int32" Name="H7" />
+          <Property Type="Int32" Name="H8" />
+          <Property Type="String" Name="EmployeeID" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="RangedTimeEntry">
+          <Property Type="Int32" Name="ProjectID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowCID" Nullable="false" />
+          <Property Type="Int32" Name="RecordID" Nullable="false" />
+          <Property Type="Int32" Name="RecordStatus" Nullable="false" />
+          <Property Type="Int32" Name="RecordMethod" Nullable="false" />
+          <Property Type="Int32" Name="ShadowCLID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowPID" Nullable="false" />
+          <Property Type="String" Name="EmployeeID" Nullable="false" MaxLength="22" />
+          <Property Type="DateTime" Name="EntryDate" Nullable="true" Precision="23" />
+          <Property Type="Double" Name="Time" Nullable="true" />
+          <Property Type="String" Name="Comment" Nullable="true" MaxLength="240" />
+          <Property Type="Boolean" Name="Billable" Nullable="false" />
+          <Property Type="Int32" Name="EmployeeDID" Nullable="false" />
+          <Property Type="String" Name="ProjectName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ClientName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Client_ProjectName" Nullable="true" MaxLength="101" />
+          <Property Type="Int32" Name="H1" Nullable="true" />
+          <Property Type="Int32" Name="H2" Nullable="true" />
+          <Property Type="Int32" Name="H3" Nullable="true" />
+          <Property Type="Int32" Name="H4" Nullable="true" />
+          <Property Type="Int32" Name="H5" Nullable="true" />
+          <Property Type="Int32" Name="H6" Nullable="true" />
+          <Property Type="Int32" Name="H7" Nullable="true" />
+          <Property Type="Int32" Name="H8" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="ClientView">
+          <Key>
+            <PropertyRef Name="ShadowCID" />
+            <PropertyRef Name="ShadowCLID" />
+            <PropertyRef Name="ShadowDID" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="UseACL" />
+            <PropertyRef Name="LocaleID" />
+          </Key>
+          <Property Type="Int32" Name="ShadowCID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowCLID" Nullable="false" />
+          <Property Type="Int32" Name="ShadowDID" Nullable="false" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+          <Property Type="Int32" Name="Status" />
+          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="Last" />
+          <Property Type="String" Name="CompanyFileID" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="VerifiedDate" />
+          <Property Type="String" Name="VerifiedBy" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="BaseCompany" />
+          <Property Type="Int32" Name="NoCut" />
+          <Property Type="Boolean" Name="UseACL" Nullable="false" />
+          <Property Type="Int32" Name="LocaleID" Nullable="false" />
+          <Property Type="String" Name="Email" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SchedulingModelStoreContainer" CdmEntityContainer="SchedulingEntities">
+          <EntitySetMapping Name="SchedulerView"><EntityTypeMapping TypeName="SchedulingModel.SchedulerView"><MappingFragment StoreEntitySet="mpvw_SchedulerView">
+            <ScalarProperty Name="Billable" ColumnName="Billable" />
+                <ScalarProperty Name="EstimatedDuration" ColumnName="EstimatedDuration" />
+                <ScalarProperty Name="AppProjectID" ColumnName="AppProjectID" />
+                <ScalarProperty Name="Week" ColumnName="Week" />
+                <ScalarProperty Name="RS_ForecastID" ColumnName="RS_ForecastID" />
+            <ScalarProperty Name="ForecastHours" ColumnName="ForecastHours" />
+            <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+            <ScalarProperty Name="UserID" ColumnName="UserID" />
+            <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+            <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+            <ScalarProperty Name="LastName" ColumnName="LastName" />
+            <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+            <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+            <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+            <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+            <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ProjectView">
+            <EntityTypeMapping TypeName="SchedulingModel.ProjectView">
+              <MappingFragment StoreEntitySet="mpvw_Project">
+                <ScalarProperty Name="AddPay4" ColumnName="AddPay4" />
+                <ScalarProperty Name="AddPay3" ColumnName="AddPay3" />
+                <ScalarProperty Name="AddPay2" ColumnName="AddPay2" />
+                <ScalarProperty Name="AddPay1" ColumnName="AddPay1" />
+                <ScalarProperty Name="UtilQual4" ColumnName="UtilQual4" />
+                <ScalarProperty Name="UtilQual3" ColumnName="UtilQual3" />
+                <ScalarProperty Name="UtilQual2" ColumnName="UtilQual2" />
+                <ScalarProperty Name="UtilQual1" ColumnName="UtilQual1" />
+                <ScalarProperty Name="Milestone" ColumnName="Milestone" />
+                <ScalarProperty Name="DecrementType" ColumnName="DecrementType" />
+                <ScalarProperty Name="NoEntryOnMax" ColumnName="NoEntryOnMax" />
+                <ScalarProperty Name="EstimatedUnitsMax" ColumnName="EstimatedUnitsMax" />
+                <ScalarProperty Name="AccruedUnits" ColumnName="AccruedUnits" />
+                <ScalarProperty Name="RateCatID" ColumnName="RateCatID" />
+                <ScalarProperty Name="BillingType" ColumnName="BillingType" />
+                <ScalarProperty Name="WorkCategory" ColumnName="WorkCategory" />
+                <ScalarProperty Name="Billable" ColumnName="Billable" />
+                <ScalarProperty Name="ProjectManager" ColumnName="ProjectManager" />
+                <ScalarProperty Name="EstimatedDuration" ColumnName="EstimatedDuration" />
+                <ScalarProperty Name="EstimatedCompleteDate" ColumnName="EstimatedCompleteDate" />
+                <ScalarProperty Name="MPApplicationID" ColumnName="MPApplicationID" />
+                <ScalarProperty Name="MPProjectID" ColumnName="MPProjectID" />
+                <ScalarProperty Name="ProjectTrackingNumber" ColumnName="ProjectTrackingNumber" />
+                <ScalarProperty Name="Visible" ColumnName="Visible" />
+                <ScalarProperty Name="RecordStatus" ColumnName="RecordStatus" />
+                <ScalarProperty Name="ProjectStatusID" ColumnName="ProjectStatusID" />
+                <ScalarProperty Name="ProjStatusShadowCID" ColumnName="ProjStatusShadowCID" />
+                <ScalarProperty Name="ShadowDID" ColumnName="ShadowDID" />
+                <ScalarProperty Name="SubProjectID8" ColumnName="SubProjectID8" />
+                <ScalarProperty Name="SubProjectID7" ColumnName="SubProjectID7" />
+                <ScalarProperty Name="SubProjectID6" ColumnName="SubProjectID6" />
+                <ScalarProperty Name="SubProjectID5" ColumnName="SubProjectID5" />
+                <ScalarProperty Name="SubProjectID4" ColumnName="SubProjectID4" />
+                <ScalarProperty Name="SubProjectID3" ColumnName="SubProjectID3" />
+                <ScalarProperty Name="SubProjectID2" ColumnName="SubProjectID2" />
+                <ScalarProperty Name="SubProjectID1" ColumnName="SubProjectID1" />
+                <ScalarProperty Name="ProjectParent" ColumnName="ProjectParent" />
+                <ScalarProperty Name="UseACL" ColumnName="UseACL" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ShadowPID" ColumnName="ShadowPID" />
+                <ScalarProperty Name="ShadowCLID" ColumnName="ShadowCLID" />
+                <ScalarProperty Name="ShadowCID" ColumnName="ShadowCID" />
+                <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+                <ScalarProperty Name="RecordType" ColumnName="RecordType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimeEntryView">
+            <EntityTypeMapping TypeName="SchedulingModel.TimeEntryView">
+              <MappingFragment StoreEntitySet="mpvw_TimeEntry">
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="H8" ColumnName="H8" />
+                <ScalarProperty Name="H7" ColumnName="H7" />
+                <ScalarProperty Name="H6" ColumnName="H6" />
+                <ScalarProperty Name="H5" ColumnName="H5" />
+                <ScalarProperty Name="H4" ColumnName="H4" />
+                <ScalarProperty Name="H3" ColumnName="H3" />
+                <ScalarProperty Name="H2" ColumnName="H2" />
+                <ScalarProperty Name="H1" ColumnName="H1" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="EntryTime" ColumnName="EntryTime" />
+                <ScalarProperty Name="RecordID" ColumnName="RecordID" />
+                <ScalarProperty Name="ShadowPID" ColumnName="ShadowPID" />
+                <ScalarProperty Name="ShadowCLID" ColumnName="ShadowCLID" />
+                <ScalarProperty Name="ShadowCID" ColumnName="ShadowCID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="yps_GetTimeEntriesInRange" FunctionName="SchedulingModel.Store.yps_GetTimeEntriesInRange">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SchedulingModel.RangedTimeEntry">
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ShadowCID" ColumnName="ShadowCID" />
+                <ScalarProperty Name="RecordID" ColumnName="RecordID" />
+                <ScalarProperty Name="RecordStatus" ColumnName="RecordStatus" />
+                <ScalarProperty Name="RecordMethod" ColumnName="RecordMethod" />
+                <ScalarProperty Name="ShadowCLID" ColumnName="ShadowCLID" />
+                <ScalarProperty Name="ShadowPID" ColumnName="ShadowPID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="Billable" ColumnName="Billable" />
+                <ScalarProperty Name="EmployeeDID" ColumnName="EmployeeDID" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="Client_ProjectName" ColumnName="Client_ProjectName" />
+                <ScalarProperty Name="H1" ColumnName="H1" />
+                <ScalarProperty Name="H2" ColumnName="H2" />
+                <ScalarProperty Name="H3" ColumnName="H3" />
+                <ScalarProperty Name="H4" ColumnName="H4" />
+                <ScalarProperty Name="H5" ColumnName="H5" />
+                <ScalarProperty Name="H6" ColumnName="H6" />
+                <ScalarProperty Name="H7" ColumnName="H7" />
+                <ScalarProperty Name="H8" ColumnName="H8" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="ClientView">
+            <EntityTypeMapping TypeName="SchedulingModel.ClientView">
+              <MappingFragment StoreEntitySet="ypvw_ClientMaster_WebShadow">
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LocaleID" ColumnName="LocaleID" />
+                <ScalarProperty Name="UseACL" ColumnName="UseACL" />
+                <ScalarProperty Name="NoCut" ColumnName="NoCut" />
+                <ScalarProperty Name="BaseCompany" ColumnName="BaseCompany" />
+                <ScalarProperty Name="VerifiedBy" ColumnName="VerifiedBy" />
+                <ScalarProperty Name="VerifiedDate" ColumnName="VerifiedDate" />
+                <ScalarProperty Name="CompanyFileID" ColumnName="CompanyFileID" />
+                <ScalarProperty Name="Last" ColumnName="Last" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="ShadowDID" ColumnName="ShadowDID" />
+                <ScalarProperty Name="ShadowCLID" ColumnName="ShadowCLID" />
+                <ScalarProperty Name="ShadowCID" ColumnName="ShadowCID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Scheduling">
+        <EntityTypeShape EntityType="SchedulingModel.SchedulerView" Width="2.375" PointX="0.5" PointY="0.5" Height="4.0956022135416656" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulingModel.ProjectView" Width="1.5" PointX="3.375" PointY="0.75" Height="9.67234375" />
+        <EntityTypeShape EntityType="SchedulingModel.TimeEntryView" Width="2" PointX="5.375" PointY="0.75" Height="3.9033007812499996" />
+        <EntityTypeShape EntityType="SchedulingModel.ClientView" Width="1.5" PointX="0.75" PointY="5.75" Height="4.0956022135416656" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
