@@ -13,6 +13,8 @@ function callGetStandupStatus(selectedDate) {
 
     $("#messageList").listview('refresh');
 
+//    startAnimation("Contacting Outlook for " + selectedDate + " ....");
+
     var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
@@ -90,6 +92,7 @@ function callGetStandupStatus(selectedDate) {
 
     .complete(
      function () {
+//         stopAnimation();
          //alert("complete");
      });
  }
@@ -121,6 +124,8 @@ function callGetStandupStatus(selectedDate) {
          if (event.type == "pageshow") {
              $("textarea#textarea").val('');
 
+//             startAnimation("Retreiving current message from FrontDesk ....");
+
              var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
              //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?"
 
@@ -137,6 +142,7 @@ function callGetStandupStatus(selectedDate) {
                  })
                 .complete(
                  function () {
+//                     stopAnimation();
                  });
          }
      });
@@ -396,13 +402,15 @@ function callGetStandupStatus(selectedDate) {
  function callGetEmployeeTargetProcessSummary(selectedDate) {
 
      //Clear list
-     $("#tpPageList").empty();
+//     $("#tpPageList").empty();
 
-     //Add the 'Loading' header
-     var row = '<li data-role="list-divider">' + 'Contacting TP Server....' + '</li>';
-     $("#tpPageList").append(row);
+//     //Add the 'Loading' header
+//     var row = '<li data-role="list-divider">' + 'Contacting TP Server....' + '</li>';
+//     $("#tpPageList").append(row);
 
-     $("#tpPageList").listview('refresh');
+     //$("#tpPageList").listview('refresh');
+
+     startAnimation("Contacting Target Process");
 
      var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?"
      //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
@@ -477,20 +485,23 @@ function callGetStandupStatus(selectedDate) {
 
     .complete(
      function () {
+         stopAnimation();
          //alert("complete");
      });
  }
 
  function callGetEmployeeWebShadowSummary(selectedDate) {
 
-     //Clear list
-     $("#wsPageList").empty();
+//     //Clear list
+//     $("#wsPageList").empty();
 
-     //Add the 'Loading' header
-     var row = '<li data-role="list-divider">' + 'Contacting WebShadow Server....' + '</li>';
-     $("#wsPageList").append(row);
+//     //Add the 'Loading' header
+//     var row = '<li data-role="list-divider">' + 'Contacting WebShadow Server....' + '</li>';
+//     $("#wsPageList").append(row);
 
-     $("#wsPageList").listview('refresh');
+     //$("#wsPageList").listview('refresh');
+
+     startAnimation("Contacting WebShadow");
 
      var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
      //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
@@ -545,7 +556,19 @@ function callGetStandupStatus(selectedDate) {
 
     .complete(
      function () {
+         stopAnimation();
          //alert("complete");
      });
  }
 
+ //start animation for page loading
+ function startAnimation(loadingText) {
+      $.mobile.loadingMessage = loadingText;
+      $.mobile.showPageLoadingMsg();
+ }
+
+  function stopAnimation()
+  {
+ //finish animation for page loading
+      $.mobile.hidePageLoadingMsg();
+ }
