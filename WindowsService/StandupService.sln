@@ -1,18 +1,52 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandupService", "StandupService\StandupService.csproj", "{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahara.StandupService", "StandupService\Yahara.StandupService.csproj", "{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahara.Scheduler.Contracts", "Yahara.Scheduler.Contracts\Yahara.Scheduler.Contracts.csproj", "{20E57B1C-311F-4975-9AF3-411AB9F6D47C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahara.SchedulerModel", "Yahara.SchedulerModel\Yahara.SchedulerModel.csproj", "{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Debug|x86.ActiveCfg = Debug|x86
 		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Debug|x86.Build.0 = Debug|x86
+		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Release|Any CPU.ActiveCfg = Release|x86
+		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Release|Mixed Platforms.Build.0 = Release|x86
 		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Release|x86.ActiveCfg = Release|x86
 		{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}.Release|x86.Build.0 = Release|x86
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{20E57B1C-311F-4975-9AF3-411AB9F6D47C}.Release|x86.ActiveCfg = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6064E16E-D9AE-4FA0-BDCD-9F0BA1CB1AC9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
