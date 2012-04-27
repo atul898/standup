@@ -8,7 +8,7 @@
     <ProjectGuid>{9B8B9DA9-A8A7-411E-9EA2-7C56E250C8EC}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StandupService</RootNamespace>
+    <RootNamespace>Yahara.Standup</RootNamespace>
     <AssemblyName>StandupService</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
@@ -51,10 +51,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Service.cs">
+    <Compile Include="Helper\DynamicJsonObject.cs" />
+    <Compile Include="Helper\ExtensionMethods.cs" />
+    <Compile Include="Helper\ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IYaharaEmployeeStatusService.cs" />
+    <Compile Include="StandupService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="YaharaEmployeeStatusService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
