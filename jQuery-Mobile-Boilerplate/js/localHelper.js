@@ -405,6 +405,13 @@ function callGetStandupStatus(selectedDate) {
      $("#tpPageList").listview('refresh');
 
      var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?"
+     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     //var link = "http://192.168.1.107/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+
 
      $.getJSON(link)
     .success(
@@ -487,7 +494,7 @@ function callGetStandupStatus(selectedDate) {
 
      var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
      //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
- 
+
      $.getJSON(link)
     .success(
      function (data) {
