@@ -1,0 +1,42 @@
+CACHE MANIFEST
+
+## version 0.1
+
+
+http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css
+http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css
+http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css
+http://dev.jtsage.com/jQM-DateBox/css/demos.css
+/css/custom.css
+http://code.jquery.com/jquery-1.7.1.min.js
+/js/mobileinit.js
+/js/ios-orientationchange-fix.min.js
+http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js
+/js/application.js
+/js/date.js
+http://dev.jtsage.com/jquery.mousewheel.min.js
+http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.js
+http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.js
+/js/localHelper.js
+/index.html
+/apple-touch-icon.png
+/apple-touch-icon-precomposed.png
+/apple-touch-icon-72x72-precomposed.png
+/apple-touch-icon-57x57-precomposed.png
+/apple-touch-icon-114x114-precomposed.png
+/css/add2home.css
+/js/add2home.js
+/images/scrum.png
+/images/tp.png
+/images/ws.png
+/images/frontdesk.png
+http://code.jquery.com/mobile/1.0.1/images/icons-18-white.png
+http://code.jquery.com/mobile/1.0.1/images/ajax-loader.png
+
+NETWORK:
+# Other pages and resources only to be served online will come here
+http://10.111.124.47:8000/
+FALLBACK:
+# Any alternate pages in case of fallback will come here.
+
+CACHE:
