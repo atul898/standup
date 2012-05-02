@@ -640,8 +640,8 @@ function Location(position)//location function is defining with parameter
     //$("#aLocationLink").attr("href", localLocationLink)
 
 
-    //var link = "http://10.111.124.47:8000/YaharaEmployeeStatusService/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?";
-    var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?" ;
+    var link = "http://10.111.124.47:8000/YaharaEmployeeStatusService/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?";
+    //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?" ;
 
     $.getJSON(link)
             .success(
