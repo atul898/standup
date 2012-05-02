@@ -19,6 +19,7 @@ using Yahara.Scheduler.Contracts;
 using Yahara.Scheduler.Contracts.Scheduler;
 using Yahara.SchedulerModel;
 using Yahara.SchedulerService;
+using System.Device.Location;
 
 namespace Where
 {
@@ -31,7 +32,18 @@ namespace Where
         public const int NumberOfPastDaysToCache = 20;
         public const int NumberOfFutureDaysToCache = 10;
         private static List<Status> listStatus;
-        private readonly static object _doworksync = new object();
+        private readonly static object _doOutlookWorkSync = new object();
+        private static LocationSummary _locationSummary;
+
+        public static LocationSummary LocationSummary
+        {
+            get
+            {
+                if (_locationSummary == null)
+                    _locationSummary = new LocationSummary();
+                return YaharaEmployeeStatusService._locationSummary;
+            }
+        }
 
         #region WebShadow Stuff
 
@@ -502,6 +514,90 @@ namespace Where
             return summary;
         }
 
+        public LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude)
+        {
+            
+            try
+            {
+                if (string.IsNullOrEmpty(clientName))
+                    throw new ApplicationException("invalid client name");
+                var loc = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+            }
+            catch
+            {
+                LocationSummary ls = new LocationSummary();
+                Location l = new Location();
+                l.ClientName = "No cookie for you!";
+                ls.ListOfItems.Add(l);
+                return ls;
+            }
+
+            bool clientFound = false;
+            //Find if this clientName exists in the list
+            foreach (Location l in LocationSummary.ListOfItems)
+            {
+                if (l.ClientName == clientName)
+                {
+                    l.Latitude = latitude;
+                    l.Longitude = longitude;
+                    l.Timestamp = DateTime.Now;
+                    clientFound = true;
+                    break;
+                }
+            }
+
+            //This is a new client
+            if (clientFound == false)
+            {
+                Location newLocation = new Location();
+                newLocation.Longitude = longitude;
+                newLocation.Latitude = latitude;
+                newLocation.ClientName = clientName;
+                newLocation.Timestamp = DateTime.Now; //DateTime.Now.ToString("D");
+                newLocation.Link = @"http://maps.google.com/maps?q=" + clientName + @"@" + latitude + "," + longitude;
+                LocationSummary.ListOfItems.Add(newLocation);
+            }
+
+            var selfCoord = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+            foreach (Location l in LocationSummary.ListOfItems)
+            {
+                var otherCoord = new GeoCoordinate(double.Parse(l.Latitude), double.Parse(l.Longitude));
+                var distance = selfCoord.GetDistanceTo(otherCoord);
+                var distanceInMiles = 0.000621371192 * distance;
+                if (distanceInMiles >= 1)
+                    l.Distance = distanceInMiles.ToString("F") + " miles";
+                else
+                    l.Distance = (distanceInMiles * 1760).ToString("F") + " yards";
+            }
+            
+            LocationSummary.DisplayDate = DateTime.Now.ToString("D");
+            LocationSummary.UpdateAge();
+
+            //Map display related info
+            //Step 1: fill up AllLocationsForMap
+            //[
+            //  ['Bondi Beach', -33.890542, 151.274856, 4],
+            //  ['Coogee Beach', -33.923036, 151.259052, 5],
+            //  ['Cronulla Beach', -34.028249, 151.157507, 3],
+            //  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+            //  ['Maroubra Beach', -33.950198, 151.259302, 1]
+            //]
+
+            StringBuilder st = new StringBuilder();
+            int count = 0;
+
+            var arr = new List<object>();
+            foreach (Location l in LocationSummary.ListOfItems)
+            {
+                st.Append("['" + l.ClientName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
+                if (count < LocationSummary.ListOfItems.Count())
+                    st.Append(",");
+            }
+            LocationSummary.AllLocationsForMap = "[" + Environment.NewLine + st.ToString() + Environment.NewLine  + "]";
+
+            return LocationSummary;
+        }
+
         private static Microsoft.Office.Interop.Outlook.Application GetApplicationObject()
         {
 
@@ -532,7 +628,7 @@ namespace Where
         {
             try
             {
-                lock (_doworksync)
+                lock (_doOutlookWorkSync)
                 {
 
                     if (reallyDoWork == false) //avoid contacting outlook server in this case

@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using Yahara.Scheduler.Contracts;
 using Yahara.Scheduler.Contracts.Scheduler;
 using Yahara.SchedulerModel;
+using System.Device.Location;
 
 namespace Yahara.Standup
 {
@@ -22,14 +23,27 @@ namespace Yahara.Standup
         public const int NumberOfPastDaysToCache = 20;
         public const int NumberOfFutureDaysToCache = 10;
         private static List<Status> listStatus;
-        private readonly static object _doworksync = new object();
+        private readonly static object _doOutlookWorkSync = new object();
         private static string sSource;
         private static string sLog;
-
         private Dictionary<int, Project> projects;
         private Dictionary<int, Client> clients;
         private Dictionary<string, Resource> resources;
+        private static LocationSummary _locationSummary;
 
+        #region Public Properties
+        public static LocationSummary LocationSummary
+        {
+            get
+            {
+                if (_locationSummary == null)
+                    _locationSummary = new LocationSummary();
+                return YaharaEmployeeStatusService._locationSummary;
+            }
+        }
+        #endregion
+
+        #region Constructor
         private YaharaEmployeeStatusService()
         {
             sSource = "YaharaEmployeeStatusService";
@@ -44,8 +58,10 @@ namespace Yahara.Standup
             clients = new Dictionary<int, Client>();
             resources = new Dictionary<string, Resource>();
         }
+        #endregion
 
-        //[AspNetCacheProfile("CacheForXSeconds")]
+        #region Implementaion of IYaharaEmployeeStatusService
+
         public Status GetStatus(string strDate) //mmddyyyy
         {
             DateTime date = strDate.StringToDateTime();
@@ -359,8 +375,94 @@ namespace Yahara.Standup
                 return summary;
             }
         }
+        
+        public LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude)
+        {
 
-        #region private methods
+            try
+            {
+                if (string.IsNullOrEmpty(clientName))
+                    throw new ApplicationException("invalid client name");
+                var loc = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+            }
+            catch
+            {
+                LocationSummary ls = new LocationSummary();
+                Location l = new Location();
+                l.ClientName = "No cookie for you!";
+                ls.ListOfItems.Add(l);
+                return ls;
+            }
+
+            bool clientFound = false;
+            //Find if this clientName exists in the list
+            foreach (Location l in LocationSummary.ListOfItems)
+            {
+                if (l.ClientName == clientName)
+                {
+                    l.Latitude = latitude;
+                    l.Longitude = longitude;
+                    l.Timestamp = DateTime.Now;
+                    clientFound = true;
+                    break;
+                }
+            }
+
+            //This is a new client
+            if (clientFound == false)
+            {
+                Location newLocation = new Location();
+                newLocation.Longitude = longitude;
+                newLocation.Latitude = latitude;
+                newLocation.ClientName = clientName;
+                newLocation.Timestamp = DateTime.Now; //DateTime.Now.ToString("D");
+                newLocation.Link = @"http://maps.google.com/maps?q=" + clientName + @"@" + latitude + "," + longitude;
+                LocationSummary.ListOfItems.Add(newLocation);
+            }
+
+            var selfCoord = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+            foreach (Location l in LocationSummary.ListOfItems)
+            {
+                var otherCoord = new GeoCoordinate(double.Parse(l.Latitude), double.Parse(l.Longitude));
+                var distance = selfCoord.GetDistanceTo(otherCoord);
+                var distanceInMiles = 0.000621371192 * distance;
+                if (distanceInMiles >= 1)
+                    l.Distance = distanceInMiles.ToString("F") + " miles";
+                else
+                    l.Distance = (distanceInMiles * 1760).ToString("F") + " yards";
+            }
+
+            LocationSummary.DisplayDate = DateTime.Now.ToString("D");
+            LocationSummary.UpdateAge();
+
+            //Map display related info
+            //Step 1: fill up AllLocationsForMap
+            //[
+            //  ['Bondi Beach', -33.890542, 151.274856, 4],
+            //  ['Coogee Beach', -33.923036, 151.259052, 5],
+            //  ['Cronulla Beach', -34.028249, 151.157507, 3],
+            //  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+            //  ['Maroubra Beach', -33.950198, 151.259302, 1]
+            //]
+
+            StringBuilder st = new StringBuilder();
+            int count = 0;
+
+            var arr = new List<object>();
+            foreach (Location l in LocationSummary.ListOfItems)
+            {
+                st.Append("['" + l.ClientName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
+                if (count < LocationSummary.ListOfItems.Count())
+                    st.Append(",");
+            }
+            LocationSummary.AllLocationsForMap = "[" + Environment.NewLine + st.ToString() + Environment.NewLine + "]";
+
+            return LocationSummary;
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private static Microsoft.Office.Interop.Outlook.Application GetApplicationObject()
         {
@@ -409,7 +511,7 @@ namespace Yahara.Standup
                     }
                 }
 
-                lock (_doworksync)
+                lock (_doOutlookWorkSync)
                 {
                     Microsoft.Office.Interop.Outlook.Application objApp = new Microsoft.Office.Interop.Outlook.Application();
                     Microsoft.Office.Interop.Outlook.NameSpace objNsp = objApp.GetNamespace("MAPI");
@@ -570,28 +672,23 @@ namespace Yahara.Standup
                     var subject = item.Subject.ToLower();
                     var body = item.Body.ToLower();
 
-                    if (subject.Contains("working from")
-                        || body.Contains("working from")
-                        || subject.Contains("working on")
-                        || body.Contains("working on")
-                        || subject.Contains("work on")
-                        || body.Contains("work on")
-                        || subject.Contains("work from")
-                        || body.Contains("work from")
+                    if (subject.Contains("work")
                         || subject.Contains("standup")
-                        || body.Contains("standup")
+                        || subject.Contains("stand up")
                         || subject.Contains("wfh")
-                        || body.Contains("wfh")
                         || subject.Contains("pto")
-                        || body.Contains("pto")
                         || subject.Contains("sick")
-                        || body.Contains("sick")
                         || subject.Contains("home")
-                        || body.Contains("home")
                         || subject.Contains("leaving")
-                        || body.Contains("leaving")
                         || subject.Contains("today")
-                        || body.Contains("today")
+                        || subject.Contains("late")
+                        //|| body.Contains("standup")
+                        //|| body.Contains("stand up")
+                        //|| body.Contains("wfh")
+                        //|| body.Contains("pto")
+                        //|| body.Contains("sick")
+                        //|| body.Contains("home")
+                        //|| body.Contains("leaving")
                         )
                     {
                         Debug.WriteLine("Sent: {0} {1} {2}", item.SentOn.ToLongDateString(), item.SenderName, item.Subject);

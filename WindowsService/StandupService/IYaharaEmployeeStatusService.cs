@@ -33,6 +33,9 @@ namespace Yahara.Standup
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetEmployeeWebShadowSummary?date={date}")]
         Summary GetEmployeeWebShadowSummary(string date); //mmddyyyy format
 
+        [OperationContract]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/TransferLocationInfo?clientName={clientName}&latitude={latitude}&longitude={longitude}")]
+        LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude); //mmddyyyy format
 
         /// <summary>
         /// Returns an object graph representing resource assignments over a date range.
@@ -220,6 +223,125 @@ namespace Yahara.Standup
         {
             get { return totalHoursLogged; }
             set { totalHoursLogged = value; }
+        }
+    }
+
+    [DataContract]
+    public class LocationSummary
+    {
+        public LocationSummary()
+        {
+            listOfItems = new List<Location>();
+        }
+
+        List<Location> listOfItems = null;
+
+        [DataMember]
+        public List<Location> ListOfItems
+        {
+            get { return listOfItems; }
+            set { listOfItems = value; }
+        }
+
+        string displayDate = string.Empty;
+        [DataMember]
+        public string DisplayDate
+        {
+            get { return displayDate; }
+            internal set { displayDate = value; }
+        }
+
+        //eg. [
+        //      ['Bondi Beach', -33.890542, 151.274856, 4],
+        //      ['Coogee Beach', -33.923036, 151.259052, 5],
+        //      ['Cronulla Beach', -34.028249, 151.157507, 3],
+        //      ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+        //      ['Maroubra Beach', -33.950198, 151.259302, 1]
+        //    ]
+        string allLocationsForMap = string.Empty;
+        [DataMember]
+        public string AllLocationsForMap
+        {
+            get { return allLocationsForMap; }
+            internal set { allLocationsForMap = value; }
+        }
+
+        public void UpdateAge()
+        {
+            DateTime dt = DateTime.Now;
+            foreach (Location l in listOfItems)
+            {
+                TimeSpan t = dt.Subtract(l.Timestamp);
+                if (t >= new TimeSpan(1, 0, 0, 0))
+                    l.Age = t.Days.ToString() + " days";
+                else if (t >= new TimeSpan(1, 0, 0))
+                    l.Age = t.Hours.ToString() + " hours";
+                else if (t >= new TimeSpan(0, 1, 0))
+                    l.Age = t.Minutes.ToString() + " minutes";
+                else if (t >= new TimeSpan(0, 0, 1))
+                    l.Age = t.Seconds.ToString() + " seconds";
+                else
+                    l.Age = "0 seconds";
+            }
+        }
+    }
+
+    [DataContract]
+    public class Location
+    {
+        string latitude = string.Empty;
+        [DataMember]
+        public string Latitude
+        {
+            get { return latitude; }
+            set { latitude = value; }
+        }
+
+        string longitude = string.Empty;
+        [DataMember]
+        public string Longitude
+        {
+            get { return longitude; }
+            set { longitude = value; }
+        }
+
+        string clientName = string.Empty;
+        [DataMember]
+        public string ClientName
+        {
+            get { return clientName; }
+            set { clientName = value; }
+        }
+
+        DateTime timestamp = DateTime.Now;
+        public DateTime Timestamp
+        {
+            get { return timestamp; }
+            set { timestamp = value; }
+        }
+
+        string age = string.Empty;
+        [DataMember]
+        public string Age
+        {
+            get { return age; }
+            set { age = value; }
+        }
+
+        string link = string.Empty;
+        [DataMember]
+        public string Link
+        {
+            get { return link; }
+            set { link = value; }
+        }
+
+        string distance = string.Empty;
+        [DataMember]
+        public string Distance
+        {
+            get { return distance; }
+            set { distance = value; }
         }
     }
 
