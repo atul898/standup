@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 	jQuery Mobile Boilerplate
 	index.html
 -->
@@ -16,11 +16,11 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 	<!-- jQuery Mobile CSS bits -->
-	<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<link rel="stylesheet"  href="/css/jquery.mobile-1.0.1.min.css" />
 
-	<link type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" rel="stylesheet" />
-	<link type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" rel="stylesheet" />
-	<link type="text/css" href="http://dev.jtsage.com/jQM-DateBox/css/demos.css" rel="stylesheet" />
+	<link type="text/css" href="/css/jquery.mobile.datebox.min.css" rel="stylesheet" />
+	<link type="text/css" href="/css/jquery.mobile.simpledialog.min.css" rel="stylesheet" />
+	<link type="text/css" href="/css/demos.css" rel="stylesheet" />
 
 	<!-- if you have a custom theme, add it here -->
 <!--	<link rel="stylesheet"  href="/themes/jQuery-Mobile-Boilerplate.css" />-->
@@ -29,20 +29,19 @@
 	<link rel="stylesheet" href="/css/custom.css" />
 
 	<!-- Javascript includes -->
-	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="/js/jquery-1.7.1.min.js"></script>
 
 	<script src="/js/mobileinit.js"></script>
 	<script src="/js/ios-orientationchange-fix.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	<script src="/js/jquery.mobile-1.0.1.min.js"></script>
 	<script src="/js/application.js"></script>
 
     <!-- Date specific include -->
     <script src="/js/date.js"></script>
 
-	<script type="text/javascript" src="http://dev.jtsage.com/jquery.mousewheel.min.js"></script>
-	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.js"></script>
-	<script type="text/javascript" src="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.js"></script>
-
+	<script type="text/javascript" src="/js/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.mobile.datebox.js"></script>
+	<script type="text/javascript" src="/js/jquery.mobile.simpledialog.min.js"></script>
 
     <!--Local Javascript-->
 	<script type="text/javascript" src="/js/localHelper.js"  ></script>
@@ -53,6 +52,10 @@
         var localStandupDateVariable;
         var localTPDateVariable;
         var localWSDateVariable;
+        var currentUser;
+        var localLatitude;
+        var localLongitude;
+        var allLocationsForMap;
     </script>
 
 
@@ -92,11 +95,30 @@
         });
 </script>  -->
 
+    <!--Google Maps related-->
+    <script src="http://maps.google.com/maps/api/js?sensor=false"  type="text/javascript"></script>
+
 
 </head>
 <body>
 
-	<div data-role="page" id="homePage" data-add-back-btn="true">
+	<div data-role="popup" id="popupLogin" data-overlay-theme="b" data-theme="a" class="ui-corner-all">
+		<form>
+			<div style="padding:10px 20px;">
+				<h3>Swāgatam</h3>
+		        <label for="un" class="ui-hidden-accessible">Username:</label>
+		        <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" />
+
+		        <label for="pw" class="ui-hidden-accessible">Password:</label>
+		        <input type="password" name="pw" id="pass" value="" placeholder="password" data-theme="a" />
+
+		    	<button id="popupLoginButton" type="submit" data-theme="b" >Sign in</button>
+                <h5>- Use your yahara id<br />- Leave password blank</h5>
+			</div>
+		</form>
+	</div>
+
+	<div data-role="page" id="homePage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
         	<h1>Yahara Software</h1>
 <!--            <a href="#homePage" rel="external"  data-icon="refresh" data-iconpos="notext" data-direction="reverse">Reload</a>-->
@@ -125,8 +147,32 @@
 				<h3>Web Shadow</h3>
 				<p>Time in for the week so far this week</p>
 			</a></li>
+
+<!--			<li><a id="aLocationLink">-->
+			<li><a href="#locationPage">
+				<img src="images/location.png" />
+				<h3>My location ..?</h3>
+                <p>Find & share your location</p>                
+			</a></li>
+
             </ul>
 		</div>
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+    <div data-role="page" id="aboutPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>About Us</h1>
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+		</div><!-- /header -->
+
+    <div data-role="content" user-scalable="yes">
+        	<h1>WELCOME</h1>
+        <p>&copy; Yahara Software </p>
+    </div><!-- /content -->
+
 <!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
 			    <p>&copy; Yahara Software </p>
 		</div>	-->
@@ -251,18 +297,33 @@
 		</div>-->
 	</div>
 
-
-    <div data-role="page" id="aboutPage" >
+    <div data-role="page" id="locationPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">
-        	<h1>About Us</h1>
-            <a href="#frondeskPage" data-icon="gear" data-iconpos="notext" data-direction="reverse">Settings</a>
+        	<h1>There you are :-)</h1>
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+            <a href="#mapPage" data-icon="back" data-iconpos="notext" data-transition="flip">Map</a>
 		</div><!-- /header -->
 
-    <div data-role="content" user-scalable="yes">
-<!--        <iframe src="http://www.yaharasoftware.com/TopNavigation/AboutUs.aspx" width="100%" height="100%">
-            <p>Your browser does not support iframes.</p>
-        </iframe>   -->
-        <p>&copy; Yahara Software </p>
+    <div data-role="content">
+        <ul data-role="listview" id="locationPageList" data-theme="d" data-divider-theme="d"></ul>
+    </div><!-- /content -->
+
+<!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
+			    <p>&copy; Yahara Software </p>
+		</div>	-->
+	</div>
+
+    <div data-role="page" id="mapPage" >
+		<div data-role="header" data-position="fixed" data-fullscreen="true">
+        	<h1>There you are!</h1>
+            <a href="#homePage" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+            <a href="#locationPage" data-icon="back" data-iconpos="notext" data-transition="flip">Location</a>
+		</div><!-- /header -->
+
+    <div data-role="content">
+        <!--http://stackoverflow.com/questions/3059044/google-maps-js-api-v3-simple-multiple-marker-example-->
+        <!--http://you.arenot.me/2010/06/29/google-maps-api-v3-0-multiple-markers-multiple-infowindows/-->
+        <div id="map_canvas" style="width: device-width; height: 400px;"></div>
     </div><!-- /content -->
 
 <!--		<div data-role="footer" data-position="fixed" data-fullscreen="true">
@@ -294,21 +355,6 @@
             </a>
 		</div>
 	</div>
-
-<!--		<div data-role="popup" id="popupLogin" data-overlay-theme="b" data-theme="a" class="ui-corner-all">
-			<form>
-				<div style="padding:10px 20px;">
-				  <h3>Please sign in</h3>
-		          <label for="un" class="ui-hidden-accessible">Username:</label>
-		          <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" />
-
-		          <label for="pw" class="ui-hidden-accessible">Password:</label>
-		          <input type="password" name="pw" id="pass" value="" placeholder="password" data-theme="a" />
-
-		    	  <button id="popupLoginButton" type="submit" data-theme="b" >Sign in</button>
-				</div>
-			</form>
-		</div>-->
 
     <div data-role="page" id="detailPage" >
 		<div data-role="header" data-position="fixed" data-fullscreen="true">

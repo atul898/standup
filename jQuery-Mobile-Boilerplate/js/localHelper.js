@@ -54,7 +54,7 @@ function callGetStandupStatus(selectedDate) {
              //                </a>
              //            </li>
 
-             var row = '<li><a href="#detailPage?item=' + i + '" rel="external"><h3>' + data.ListOfItems[i].Name + '        ' +
+             row = '<li><a href="#detailPage?item=' + i + '" rel="external"><h3>' + data.ListOfItems[i].Name + '        ' +
                 '</h3><p><strong>' + data.ListOfItems[i].Subject +
                 '</strong></p><p>' + data.ListOfItems[i].MessageBody +
                 '</p><p class="ui-li-aside"><strong>' + data.ListOfItems[i].DisplayTime + '</strong></p></a> </li>';
@@ -104,6 +104,30 @@ function callGetStandupStatus(selectedDate) {
 
  $(document).ready(function () {
 
+     currentUser = localStorage.getItem("currentUser");
+     if (currentUser == null || currentUser.length == 0) {
+         $.mobile.changePage('#popupLogin', 'pop', true, true);
+     }
+     else {
+         $.mobile.changePage('#homePage', 'pop', true, true);
+     }
+
+
+     $("#popupLoginButton").click(function (event) {
+         currentUser = $('#un').val();
+         if (currentUser.length > 0) {
+             localStorage.setItem("currentUser", currentUser);
+             $('#popupLogin').dialog('close');
+             $.mobile.changePage('#homePage',
+                                     { transition: "slideup",
+                                         reloadPage: false
+                                     });
+         }
+         else {
+             event.preventDefault();
+         }
+     });
+
      localStandupDateVariable = new Date();
 
      var curr_date = localStandupDateVariable.getDate();
@@ -120,13 +144,73 @@ function callGetStandupStatus(selectedDate) {
          }
      });
 
+     $("#popupLogin").live('pageshow', function (event) {
+         if (event.type == "pageshow") {
+
+             currentUser = localStorage.getItem("currentUser");
+             if (currentUser == null || currentUser.length == 0) {
+                 //do nothing
+             }
+             else {
+                 $.mobile.changePage('#homePage', 'pop', true, true);
+             }
+
+         }
+     });
+
+     $("#locationPage").live('pageshow', function (event) {
+         if (event.type == "pageshow") {
+             //get current location
+             findLocation();
+         }
+     });
+
+     $("#mapPage").live('pageinit', function (event) {
+         if (event.type == "pageinit") {
+
+//             var locations = [
+//              ['Bondi Beach', -33.890542, 151.274856, 4],
+//              ['Coogee Beach', -33.923036, 151.259052, 5],
+//              ['Cronulla Beach', -34.028249, 151.157507, 3],
+//              ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+//              ['Maroubra Beach', -33.950198, 151.259302, 1]
+//            ];
+
+             var locations = eval(allLocationsForMap); //allLocationsForMap //JSON.parse(allLocationsForMap); //jQuery.parseJSON(allLocationsForMap);
+
+             var map = new google.maps.Map(document.getElementById('map_canvas'), {
+                 zoom: 10,
+                 center: new google.maps.LatLng(localLatitude, localLongitude),
+                 mapTypeId: google.maps.MapTypeId.ROADMAP
+             });
+
+             var infowindow = new google.maps.InfoWindow();
+
+             var marker, i;
+
+             for (i = 0; i < locations.length; i++) {
+                 marker = new google.maps.Marker({
+                     position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                     map: map
+                 });
+
+                 google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                     return function () {
+                         infowindow.setContent(locations[i][0]);
+                         infowindow.open(map, marker);
+                     }
+                 })(marker, i));
+             }
+         }
+     });
+
      $("#frondeskPage").live('pageshow', function (event) {
          if (event.type == "pageshow") {
              $("textarea#textarea").val('');
 
-//             startAnimation("Retreiving current message from FrontDesk ....");
+             //             startAnimation("Retreiving current message from FrontDesk ....");
 
-             var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
+             var link = "http://10.111.124.47:8000/YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
              //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?"
 
              $.getJSON(link)
@@ -142,7 +226,7 @@ function callGetStandupStatus(selectedDate) {
                  })
                 .complete(
                  function () {
-//                     stopAnimation();
+                     //                     stopAnimation();
                  });
          }
      });
@@ -288,22 +372,6 @@ function callGetStandupStatus(selectedDate) {
          }
      });
 
-     //     $("#popupLoginButton").click(function (event) {
-     //         if (($("un").value == "test") && ($("pass").value == "test")) {
-     //             //$('#popupLogin').dialog('close');
-     //             //             $.mobile.loadPage('#standupPage',
-     //             //                        { transition: "slideup",
-     //             //                            reloadPage: true
-     //             //                        });
-     //             $.mobile.changePage('#standupPage', { transition: "slideup" });
-     //         }
-     //         else {
-     //             event.preventDefault();
-     //         }
-     //     });
-
-     //$.mobile.changePage('#popupLogin', 'pop', true, true);
-
      $('#detailPage').live('pageshow', function (event) {
          var i = getParameterByName('item');
          //alert(i);
@@ -328,16 +396,6 @@ function callGetStandupStatus(selectedDate) {
          $("#detailPageul").listview('refresh');
 
      });
-
-     //     $('#tpDateBox').datepicker().onchange(function (event) {
-     //         var d = $('#tpDateBox').value;
-     //     });
-     //     $("#tpDateBox").datebox({
-     //         onselect: function (dateText) {
-     //             //display("Selected date: " + dateText + "; input's current value: " + this.value);
-     //             alert("Selected date: " + dateText + "; input's current value: " + this.value);
-     //         }
-     //     });
 
  });
 
@@ -367,14 +425,6 @@ function callGetStandupStatus(selectedDate) {
      return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
  }
 
-
-// function nl2br_js(myString) {
-//     var regX = /\n/gi;
-
-//     s = new String(myString);
-//     s = s.replace(regX, "<br /> \n");
-//     return s;
- // }
 
  function tpDateValueSet(obj) {
      var dateChosen = obj.value;
@@ -571,4 +621,86 @@ function callGetStandupStatus(selectedDate) {
   {
  //finish animation for page loading
       $.mobile.hidePageLoadingMsg();
- }
+  }
+
+
+function Location(position)//location function is defining with parameter
+{
+    startAnimation();
+
+    var latitude = position.coords.latitude; //Specifies the longitude estimate in decimal degrees. The value range is [-180.00, +180.00].
+    var longitude = position.coords.longitude;
+    localLatitude = latitude;
+    localLongitude = longitude;
+
+    //$("#lati").innerHTML = latitude; //latitude value is defining in label element where id is lati
+    //$("#longi").innerHTML = longitude;
+    //http://maps.google.com/maps?q=AtulChauhan@43.0799,-89.5196
+    //localLocationLink = "http://maps.google.com/maps?q=AtulChauhan@" + latitude + "," + longitude;
+    //$("#aLocationLink").attr("href", localLocationLink)
+
+
+    //var link = "http://10.111.124.47:8000/YaharaEmployeeStatusService/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?";
+    var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?" ;
+
+    $.getJSON(link)
+            .success(
+                function (data) {
+
+                    allLocationsForMap = data.AllLocationsForMap;
+
+                    //Clear list
+                    $("#locationPageList").empty();
+
+                    //Add the header
+                    var row = '<li data-role="list-divider" id="dateHeader">' + data.DisplayDate
+                                + '<span class="ui-li-count" id="itemCount">' + data.ListOfItems.length
+                                + '</span></li>'
+                    $("#locationPageList").append(row);
+
+                    for (var i = 0; i < data.ListOfItems.length; i++) {
+                        console.log(data.ListOfItems[i].ClientName);
+
+                        //Each item looks like this    
+                        //            <li><a href="index.html">
+                        //                <h3>data.ListOfItems[i].Name</h3>
+                        //                <p><strong>data.ListOfItems[i].Subject</strong></p>
+                        //                <p>data.ListOfItems[i].Message</p>
+                        //                <p class="ui-li-aside"><strong>6:24</strong>PM</p>
+                        //                </a>
+                        //            </li>
+
+                        if (currentUser == data.ListOfItems[i].ClientName) {
+                            row = '<li><a href="' + data.ListOfItems[i].Link + '"><h3>' + ':-) ' + data.ListOfItems[i].ClientName + '    ' +
+                                '</h3><p>' + data.ListOfItems[i].Latitude + ', ' + data.ListOfItems[i].Longitude +
+                                '</p><p class="ui-li-aside"><strong>' + ' ' + '</strong></p></a> </li>';
+                        }
+                        else {
+                            row = '<li><a href="' + data.ListOfItems[i].Link + '"><h3>' + data.ListOfItems[i].ClientName + '    ' +
+                            '</h3><p>' + ' was here ' + data.ListOfItems[i].Age + ' ago' +
+                            '</p><p class="ui-li-aside"><strong>' + data.ListOfItems[i].Distance + '</strong></p></a> </li>';
+                        }
+                        $("#locationPageList").append(row);
+                    }
+
+                    $("#locationPageList").listview('refresh');
+                    $("ul").fadeTo(100, 0.1);
+                    $("ul").fadeTo(500, 1.0);
+                })
+            .error(
+                function () {
+                    alert("error");
+                })
+            .complete(
+                function () {
+                    stopAnimation();
+                });
+
+}
+function findLocation()
+{
+    if (navigator.geolocation)//checking browser compatibility
+        {
+        navigator.geolocation.getCurrentPosition(Location);//getCurrentPosition method retrieve the current geographic location of the user 
+    }
+}
