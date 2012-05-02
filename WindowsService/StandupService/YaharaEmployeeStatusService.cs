@@ -134,12 +134,13 @@ namespace Yahara.Standup
             s.Message = returnString.ToString();
             return s;
         }
-        
+
         public Summary GetEmployeeTargetProcessSummary(string strDate) //mmddyyyy format
         {
             DateTime requestedDate = strDate.StringToDateTime();
             DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
-            previousMonday = previousMonday.AddDays(-1); //hack, but hey it works
+            previousMonday = previousMonday.AddDays(-1); //hack
+            requestedDate = requestedDate.AddDays(1); // & hack to get the number right (as they should be)
 
             //Step 1 : Collect all emails
             Summary summary = new Summary(strDate.StringToDateTime());
@@ -257,7 +258,6 @@ namespace Yahara.Standup
         {
             DateTime requestedDate = strDate.StringToDateTime();
             DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
-            previousMonday = previousMonday.AddDays(-1); //hack
 
             ForecastSummary fs = GetForecast(previousMonday.DateTimeToString(), requestedDate.DateTimeToString());
 
