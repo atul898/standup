@@ -15,7 +15,7 @@ function callGetStandupStatus(selectedDate) {
 
 //    startAnimation("Contacting Outlook for " + selectedDate + " ....");
 
-    var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
+    var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
@@ -210,7 +210,7 @@ function callGetStandupStatus(selectedDate) {
 
              //             startAnimation("Retreiving current message from FrontDesk ....");
 
-             var link = "http://10.111.124.47:8000/YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
+             var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
              //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?"
 
              $.getJSON(link)
@@ -351,7 +351,7 @@ function callGetStandupStatus(selectedDate) {
          if ($("#sliderYesNo")[0].selectedIndex == 1) {
              a = 2;
              var t = $("textarea").val().replace(/\n\r?/g, '<br />');
-             var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/WelcomeMessage?message=" + t + "&callback=?";
+             var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/WelcomeMessage?message=" + t + "&callback=?";
 
              $.getJSON(link)
                 .success(
@@ -462,8 +462,8 @@ function callGetStandupStatus(selectedDate) {
 
      startAnimation("Contacting Target Process");
 
-     var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?"
-     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
+     var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?";
+     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?";
      //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
      //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
      //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
@@ -553,8 +553,8 @@ function callGetStandupStatus(selectedDate) {
 
      startAnimation("Contacting WebShadow");
 
-     var link = "http://10.111.124.47:8000//YaharaEmployeeStatusService/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
-     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?"
+     var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?";
+     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeWebShadowSummary?date=" + selectedDate + "&callback=?";
 
      $.getJSON(link)
     .success(
@@ -640,7 +640,7 @@ function Location(position)//location function is defining with parameter
     //$("#aLocationLink").attr("href", localLocationLink)
 
 
-    var link = "http://10.111.124.47:8000/YaharaEmployeeStatusService/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?";
+    var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?";
     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/TransferLocationInfo?clientName=" + currentUser + "&latitude=" + localLatitude + "&longitude=" + localLongitude + "&" + "callback=?" ;
 
     $.getJSON(link)
