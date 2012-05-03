@@ -31,10 +31,34 @@ namespace Where
     {
         public const int NumberOfPastDaysToCache = 20;
         public const int NumberOfFutureDaysToCache = 10;
-        private static List<Status> listStatus;
-        private readonly static object _doOutlookWorkSync = new object();
-        private static LocationSummary _locationSummary;
 
+        //we will cache dailty status data (email/calender/outlook) in this
+        private static List<Status> listStatus;
+        public static List<Status> ListStatus
+        {
+            get { return YaharaEmployeeStatusService.listStatus; }
+            set { YaharaEmployeeStatusService.listStatus = value; }
+        }
+
+        private static List<Summary> listTPSummary;
+        public static List<Summary> ListTPSummary
+        {
+            get { return YaharaEmployeeStatusService.listTPSummary; }
+            set { YaharaEmployeeStatusService.listTPSummary = value; }
+        }
+
+        private static List<Summary> listWSSummary;
+        public static List<Summary> ListWSSummary
+        {
+            get { return YaharaEmployeeStatusService.listWSSummary; }
+            set { YaharaEmployeeStatusService.listWSSummary = value; }
+        }
+
+        //for sync
+        private readonly static object _doOutlookWorkSync = new object();
+
+        //location related
+        private static LocationSummary _locationSummary;
         public static LocationSummary LocationSummary
         {
             get
@@ -56,6 +80,9 @@ namespace Where
             projects = new Dictionary<int, Project>();
             clients = new Dictionary<int, Client>();
             resources = new Dictionary<string, Resource>();
+
+            ListTPSummary = new List<Summary>();
+            ListWSSummary = new List<Summary>();
         }
 
         /// <summary>
@@ -375,143 +402,50 @@ namespace Where
 
         public Summary GetEmployeeTargetProcessSummary(string strDate) //mmddyyyy format
         {
-            DateTime requestedDate = strDate.StringToDateTime();
-            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
-            previousMonday = previousMonday.AddDays(-1); //hack
-            requestedDate = requestedDate.AddDays(1); // & hack to get the number right (as they should be)
+            var s = (from l in ListTPSummary
+                        where (l.Date == strDate) 
+                        select l).FirstOrDefault();
 
-            //Step 1 : Collect all emails
-            Summary summary = new Summary(strDate.StringToDateTime());
-            var webClient = new WebClient();
-            webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
-
-            var nextLink = "http://tp.yaharasoftware.com/api/v1/Users?format=json";
-
-            while (nextLink != null)
+            if (s != null)
             {
-                Stream data = webClient.OpenRead(nextLink);
-                StreamReader reader = new StreamReader(data);
-                string json = reader.ReadToEnd();
-                //Debug.WriteLine(json);
-                data.Close();
-                reader.Close();
-
-                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
-                int count = tpEntry.Items.Count;
-                for (int i = 0; i < count; i++)
+                //Is the data older than 10 minutes
+                if (DateTime.Now.Subtract(s.Timestamp).CompareTo(new TimeSpan(0, 10, 0)) > 1)
                 {
-                    try
-                    {
-                        string email = tpEntry.Items[i]["Email"].ToLower();
-                        if (!email.Contains("yahara") || tpEntry.Items[i]["IsActive"] == false)
-                            continue;
-
-                        EmployeeDetail ed = new EmployeeDetail();
-                        ed.Id = tpEntry.Items[i]["Id"];
-                        ed.Name = tpEntry.Items[i]["FirstName"] + " " + tpEntry.Items[i]["LastName"];
-                        ed.Email = tpEntry.Items[i]["Email"];
-                        summary.ListOfItems.Add(ed);
-                    }
-                    catch { 
-                        //ignore and move on
-                    }
-                }
-                try
-                {
-                    if (tpEntry.Next != null)
-                        nextLink = tpEntry.Next;
-                    else
-                        nextLink = null;
-                }
-                catch(KeyNotFoundException)
-                {
-                    nextLink = null;
+                    ListTPSummary.Remove(s);
+                    s = TargetProcessSummary(strDate);
+                    ListTPSummary.Add(s);
                 }
             }
-
-            //Step 2 : Collect all times for this week
-            //var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'2012-04-16')%20and%20(Date%20lt%20'2012-04-19')";
-            var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'"
-                                + previousMonday.ToString("yyyy-MM-dd")
-                                + "')%20and%20(Date%20lt%20'"
-                                + requestedDate.ToString("yyyy-MM-dd")
-                                + "')";
-
-            while (nextTimeLink != null)
+            else
             {
-                Stream data = webClient.OpenRead(nextTimeLink);
-                StreamReader reader = new StreamReader(data);
-                string json = reader.ReadToEnd();
-                //Debug.WriteLine(json);
-                data.Close();
-                reader.Close();
-
-                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
-                int count = tpEntry.Items.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    try
-                    {
-                        int Id = tpEntry.Items[i]["User"]["Id"];
-                        var ed = (from l in summary.ListOfItems where l.Id == Id select l).FirstOrDefault();
-                        if(ed == null)
-                            continue;
-
-                        DateTime dateTimeSpentOn = tpEntry.Items[i]["Date"];
-                        decimal timeSpent = tpEntry.Items[i]["Spent"];
-
-                        if ((requestedDate.GetEndOfDay().CompareTo(dateTimeSpentOn) >= 0) && (previousMonday.Date.CompareTo(dateTimeSpentOn) <= 0))
-                        {
-                            (from l in summary.ListOfItems where l.Id == Id select l).First().TotalHoursLogged += timeSpent;
-                        }
-                    }
-                    catch
-                    {
-                        //ignore and move on
-                    }
-                }
-                try
-                {
-                    if (tpEntry.Next != null)
-                        nextTimeLink = tpEntry.Next;
-                    else
-                        nextTimeLink = null;
-                }
-                catch (KeyNotFoundException)
-                {
-                    nextTimeLink = null;
-                }
+                s = TargetProcessSummary(strDate);
+                ListTPSummary.Add(s);
             }
-
-            EmployeeDetailComparer dc = new EmployeeDetailComparer();
-            summary.ListOfItems.Sort(dc);
-
-            return summary;
+            return s;
         }
 
         public Summary GetEmployeeWebShadowSummary(string strDate) //mmddyyyy format
         {
-            DateTime requestedDate = strDate.StringToDateTime();
-            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
+            var s = (from l in ListWSSummary
+                     where (l.Date == strDate)
+                     select l).FirstOrDefault();
 
-            ForecastSummary fs = GetForecast(previousMonday.DateTimeToString(), requestedDate.DateTimeToString());
-
-            Summary summary = new Summary(strDate.StringToDateTime());
-            summary.ListOfItems = new List<EmployeeDetail>(fs.Resources.Count);
-
-            foreach (ResourceSummary rs in fs.Resources)
+            if (s != null)
             {
-                EmployeeDetail ed = new EmployeeDetail();
-                ed.TotalHoursLogged = (decimal)rs.TotalHoursRecorded;
-                ed.Name = rs.Resource.FirstName + " " + rs.Resource.LastName;
-                summary.ListOfItems.Add(ed);
+                //Is the data older than 10 minutes
+                if (DateTime.Now.Subtract(s.Timestamp).CompareTo(new TimeSpan(0, 10, 0)) > 1)
+                {
+                    ListWSSummary.Remove(s);
+                    s = WebShadowSummary(strDate);
+                    ListWSSummary.Add(s);
+                }
             }
-
-            EmployeeDetailComparer dc = new EmployeeDetailComparer();
-            summary.ListOfItems.Sort(dc);
-            return summary;
+            else
+            {
+                s = WebShadowSummary(strDate);
+                ListWSSummary.Add(s);
+            }
+            return s;
         }
 
         public LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude)
@@ -633,7 +567,7 @@ namespace Where
 
                     if (reallyDoWork == false) //avoid contacting outlook server in this case
                     {
-                        var s = (from l in listStatus
+                        var s = (from l in ListStatus
                                  where l.Date == date.DateTimeToString()
                                  select l).FirstOrDefault();
 
@@ -667,9 +601,9 @@ namespace Where
                     // Get calendar folder 
                     Microsoft.Office.Interop.Outlook.MAPIFolder calendarFolder = objNsp.GetSharedDefaultFolder(oRecip, Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderCalendar);
 
-                    if (listStatus == null || listStatus.Count == 0) // first call
+                    if (ListStatus == null || ListStatus.Count == 0) // first call
                     {
-                        listStatus = new List<Status>(NumberOfPastDaysToCache + NumberOfFutureDaysToCache);
+                        ListStatus = new List<Status>(NumberOfPastDaysToCache + NumberOfFutureDaysToCache);
 
                         for (int i = -1 * NumberOfFutureDaysToCache; i < NumberOfPastDaysToCache + NumberOfFutureDaysToCache; i++)
                         {
@@ -684,22 +618,22 @@ namespace Where
                                     final.ListOfItems.AddRange(s1.ListOfItems);
                                 if (s2 != null && s2.ListOfItems != null && s2.ListOfItems.Count > 0)
                                     final.ListOfItems.AddRange(s2.ListOfItems);
-                                listStatus.Add(final);
+                                ListStatus.Add(final);
                             }
                             catch
                             {
-                                listStatus.Add(new Status(specificDate));
+                                ListStatus.Add(new Status(specificDate));
                                 ;//swallow and move on
                             }
                         }
                     }
                     else
                     {
-                        var s = (from l in listStatus
+                        var s = (from l in ListStatus
                                  where l.Date == DateTime.Today.DateTimeToString()
                                  select l).FirstOrDefault();
                         if (s != null)
-                            listStatus.Remove(s);
+                            ListStatus.Remove(s);
                         try
                         {
                             s1 = DownloadStatusForDate(DateTime.Today, objMAPIFolder);
@@ -709,11 +643,11 @@ namespace Where
                                 final.ListOfItems.AddRange(s1.ListOfItems);
                             if (s2 != null && s2.ListOfItems != null && s2.ListOfItems.Count > 0)
                                 final.ListOfItems.AddRange(s2.ListOfItems);
-                            listStatus.Add(final);
+                            ListStatus.Add(final);
                         }
                         catch
                         {
-                            listStatus.Add(new Status(DateTime.Today));
+                            ListStatus.Add(new Status(DateTime.Today));
                             ;//swallow and move on
                         }
                     }
@@ -763,7 +697,7 @@ namespace Where
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
 
-                    var st = (from l in listStatus
+                    var st = (from l in ListStatus
                               where l.Date == date.DateTimeToString()
                               select l).FirstOrDefault();
                 return st;
@@ -908,11 +842,147 @@ namespace Where
             return status;
         }
 
+        private Summary TargetProcessSummary(string strDate) //mmddyyyy format
+        {
+            DateTime requestedDate = strDate.StringToDateTime();
+            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
+            previousMonday = previousMonday.AddDays(-1); //hack
+            requestedDate = requestedDate.AddDays(1); // & hack to get the number right (as they should be)
 
-        //private DateTime DateTimeFromJson(int d)
-        //{
-        //    return new System.DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(d);
-        //}
+            //Step 1 : Collect all emails
+            Summary summary = new Summary(strDate.StringToDateTime());
+            var webClient = new WebClient();
+            webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
+
+            var nextLink = "http://tp.yaharasoftware.com/api/v1/Users?format=json";
+
+            while (nextLink != null)
+            {
+                Stream data = webClient.OpenRead(nextLink);
+                StreamReader reader = new StreamReader(data);
+                string json = reader.ReadToEnd();
+                //Debug.WriteLine(json);
+                data.Close();
+                reader.Close();
+
+                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
+                int count = tpEntry.Items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    try
+                    {
+                        string email = tpEntry.Items[i]["Email"].ToLower();
+                        if (!email.Contains("yahara") || tpEntry.Items[i]["IsActive"] == false)
+                            continue;
+
+                        EmployeeDetail ed = new EmployeeDetail();
+                        ed.Id = tpEntry.Items[i]["Id"];
+                        ed.Name = tpEntry.Items[i]["FirstName"] + " " + tpEntry.Items[i]["LastName"];
+                        ed.Email = tpEntry.Items[i]["Email"];
+                        summary.ListOfItems.Add(ed);
+                    }
+                    catch
+                    {
+                        //ignore and move on
+                    }
+                }
+                try
+                {
+                    if (tpEntry.Next != null)
+                        nextLink = tpEntry.Next;
+                    else
+                        nextLink = null;
+                }
+                catch (KeyNotFoundException)
+                {
+                    nextLink = null;
+                }
+            }
+
+            //Step 2 : Collect all times for this week
+            //var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'2012-04-16')%20and%20(Date%20lt%20'2012-04-19')";
+            var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'"
+                                + previousMonday.ToString("yyyy-MM-dd")
+                                + "')%20and%20(Date%20lt%20'"
+                                + requestedDate.ToString("yyyy-MM-dd")
+                                + "')";
+
+            while (nextTimeLink != null)
+            {
+                Stream data = webClient.OpenRead(nextTimeLink);
+                StreamReader reader = new StreamReader(data);
+                string json = reader.ReadToEnd();
+                //Debug.WriteLine(json);
+                data.Close();
+                reader.Close();
+
+                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
+                int count = tpEntry.Items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    try
+                    {
+                        int Id = tpEntry.Items[i]["User"]["Id"];
+                        var ed = (from l in summary.ListOfItems where l.Id == Id select l).FirstOrDefault();
+                        if (ed == null)
+                            continue;
+
+                        DateTime dateTimeSpentOn = tpEntry.Items[i]["Date"];
+                        decimal timeSpent = tpEntry.Items[i]["Spent"];
+
+                        if ((requestedDate.GetEndOfDay().CompareTo(dateTimeSpentOn) >= 0) && (previousMonday.Date.CompareTo(dateTimeSpentOn) <= 0))
+                        {
+                            (from l in summary.ListOfItems where l.Id == Id select l).First().TotalHoursLogged += timeSpent;
+                        }
+                    }
+                    catch
+                    {
+                        //ignore and move on
+                    }
+                }
+                try
+                {
+                    if (tpEntry.Next != null)
+                        nextTimeLink = tpEntry.Next;
+                    else
+                        nextTimeLink = null;
+                }
+                catch (KeyNotFoundException)
+                {
+                    nextTimeLink = null;
+                }
+            }
+
+            EmployeeDetailComparer dc = new EmployeeDetailComparer();
+            summary.ListOfItems.Sort(dc);
+
+            return summary;
+        }
+
+        private Summary WebShadowSummary(string strDate) //mmddyyyy format
+        {
+            DateTime requestedDate = strDate.StringToDateTime();
+            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
+
+            ForecastSummary fs = GetForecast(previousMonday.DateTimeToString(), requestedDate.DateTimeToString());
+
+            Summary summary = new Summary(strDate.StringToDateTime());
+            summary.ListOfItems = new List<EmployeeDetail>(fs.Resources.Count);
+
+            foreach (ResourceSummary rs in fs.Resources)
+            {
+                EmployeeDetail ed = new EmployeeDetail();
+                ed.TotalHoursLogged = (decimal)rs.TotalHoursRecorded;
+                ed.Name = rs.Resource.FirstName + " " + rs.Resource.LastName;
+                summary.ListOfItems.Add(ed);
+            }
+
+            EmployeeDetailComparer dc = new EmployeeDetailComparer();
+            summary.ListOfItems.Sort(dc);
+            return summary;
+        }
     }
 
     //http://www.drowningintechnicaldebt.com/ShawnWeisfeld/archive/2010/08/22/using-c-4.0-and-dynamic-to-parse-json.aspx

@@ -84,6 +84,7 @@ namespace Where
             listOfItems = new List<EmployeeDetail>();
             date = d.DateTimeToString();
             displayDate = d.ToString("D");
+            DateTime timestamp = DateTime.Now;
         }
 
         List<EmployeeDetail> listOfItems = null;
@@ -109,6 +110,13 @@ namespace Where
         {
             get { return displayDate; }
             internal set { displayDate = value; }
+        }
+
+        DateTime timestamp = DateTime.Now;
+        public DateTime Timestamp
+        {
+            get { return timestamp; }
+            internal set { timestamp = value; }
         }
     }
 
