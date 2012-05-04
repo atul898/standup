@@ -357,7 +357,8 @@ namespace Yahara.Standup
                     //Step 1 : Collect all emails
                     summary = new Summary(strDate.StringToDateTime());
                     var webClient = new WebClient();
-                    webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
+                    //webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw=="); //atul's key
+                    webClient.Headers.Add("Authorization", "Basic a2V2aW5tOlJVQ3Jhenky"); //kevin's key 
                     JavaScriptSerializer jss = new JavaScriptSerializer();
                     jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
 

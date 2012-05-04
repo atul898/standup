@@ -29,8 +29,8 @@ namespace Where
                  ConcurrencyMode = ConcurrencyMode.Single)]
     public class YaharaEmployeeStatusService : IYaharaEmployeeStatusService
     {
-        public const int NumberOfPastDaysToCache = 30;
-        public const int NumberOfFutureDaysToCache = 30;
+        public const int NumberOfPastDaysToCache = 3;
+        public const int NumberOfFutureDaysToCache = 3;
 
         private Dictionary<int, Project> projects;
         private Dictionary<int, Client> clients;
@@ -722,7 +722,8 @@ namespace Where
             //Step 1 : Collect all emails
             Summary summary = new Summary(strDate.StringToDateTime());
             var webClient = new WebClient();
-            webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
+            //webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw=="); //atul's key
+            webClient.Headers.Add("Authorization", "Basic a2V2aW5tOlJVQ3Jhenky"); //kevin's key   
             JavaScriptSerializer jss = new JavaScriptSerializer();
             jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
 
