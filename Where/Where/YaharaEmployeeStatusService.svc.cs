@@ -29,8 +29,8 @@ namespace Where
                  ConcurrencyMode = ConcurrencyMode.Single)]
     public class YaharaEmployeeStatusService : IYaharaEmployeeStatusService
     {
-        public const int NumberOfPastDaysToCache = 20;
-        public const int NumberOfFutureDaysToCache = 10;
+        public const int NumberOfPastDaysToCache = 30;
+        public const int NumberOfFutureDaysToCache = 30;
 
         //we will cache dailty status data (email/calender/outlook) in this
         private static List<Status> listStatus;
@@ -787,21 +787,80 @@ namespace Where
             string strDate2 = date.Date.AddDays(1).ToString(@"MMMM dd, yyyy hh:mm tt");
 
             Microsoft.Office.Interop.Outlook.AppointmentItem item = null;
-            string sFilter = "[Start] >= '" + strDate1 + "'"
-                            + " and " +
-                            "[End] <= '" + strDate2 + "'";
+            //Single Appt for any recurring apointment
+            Microsoft.Office.Interop.Outlook.AppointmentItem singleAppt = null;
 
+            //string sFilter = "[Start] >= '" + strDate1 + "'"
+            //                + " and " +
+            //                "[End] <= '" + strDate2 + "'";
+
+            //string sFilter = "([Start] >= '" +
+            //        date.Date.ToString("g")
+            //        + "' AND [End] <= '" +
+            //        date.AddDays(1).Date.ToString("g") + "'";
+
+            //appointments that start and end within the time
+            string sFilter1 = "[Start] >= '" +
+                    date.Date.ToString("g")
+                    + "' AND [End] <= '" +
+                    date.AddDays(1).Date.ToString("g") + "'";
+
+            //appointments that start before starttime and end after starttime
+            string sFilter2 = "[Start] < '" +
+                    date.Date.ToString("g")
+                    + "' AND [End] > '" +
+                    date.Date.ToString("g") + "'";
+
+            //appointments that start before endtime and end after endtime
+            string sFilter3 = "[Start] < '" +
+                    date.AddDays(1).ToString("g")
+                    + "' AND [End] > '" +
+                    date.AddDays(1).Date.ToString("g") + "'";
+
+            string sFilter = ("( " + sFilter1 + " ) OR ( " + sFilter2 + " ) OR ( " + sFilter3 + " )");
+
+
+            calendarFolder.Items.IncludeRecurrences = true;
             Microsoft.Office.Interop.Outlook.Items outlookCalendarItems = calendarFolder.Items.Restrict(sFilter);
+            outlookCalendarItems.Sort("[Start]", Type.Missing);
+
             Debug.WriteLine("Count after Restrict: {0}", outlookCalendarItems.Count);
 
             foreach (var v in outlookCalendarItems)
             {
                 try
                 {
+                    //This Appointment
                     item = (Microsoft.Office.Interop.Outlook.AppointmentItem)v;
 
                     if (item.IsRecurring)
-                        continue;
+                    {
+                        try
+                        {
+                            DateTime startDateTime = item.StartInStartTimeZone;
+                            Microsoft.Office.Interop.Outlook.RecurrencePattern pattern =
+                                item.GetRecurrencePattern();
+                            singleAppt =
+                                pattern.GetOccurrence(date.Date.Add(startDateTime.TimeOfDay))
+                                as Microsoft.Office.Interop.Outlook.AppointmentItem;
+                            if (singleAppt == null)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(item);
+                                item = null;
+
+                                item = singleAppt;
+                            }
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+                        
 
                     var subject = item.Subject;
                     var body = item.Body;
@@ -812,6 +871,8 @@ namespace Where
 
                         OutlookItem c = new OutlookItem();
                         c.Subject = "From " + start.ToString("t") + " To " + end.ToString("t");
+                        if (c.Subject == "From 12:00 AM To 12:00 AM")
+                            c.Subject = "All Day";
                         c.Name = item.Subject;
                         if (!string.IsNullOrWhiteSpace(location))
                             c.MessageBody = "Location : " + location + Environment.NewLine;
@@ -819,6 +880,8 @@ namespace Where
 
                         c.MessageHTMLBody = c.MessageBody;
                         c.DisplayTime = start.ToString("t");
+                        if (c.DisplayTime == "12:00 AM")
+                            c.DisplayTime = " "; //empty string, no point is displaying 12:00 AM
 
                         Debug.WriteLine(c.Name);
                         Debug.WriteLine(c.Subject);
@@ -836,6 +899,11 @@ namespace Where
                     {
                         System.Runtime.InteropServices.Marshal.FinalReleaseComObject(item);
                         item = null;
+                    }
+                    if (singleAppt != null)
+                    {
+                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(singleAppt);
+                        singleAppt = null;
                     }
                 }
             }
@@ -1083,6 +1151,4 @@ namespace Where
         }
 
     }
-
-
 }

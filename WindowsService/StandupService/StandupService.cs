@@ -8,7 +8,7 @@ namespace Yahara.Standup
 {
     public partial class StandupService : ServiceBase
     {
-        private static readonly TimeSpan UpdateEngineTimerFrequency = TimeSpan.FromMinutes(3);
+        private static readonly TimeSpan UpdateEngineTimerFrequency = TimeSpan.FromMinutes(10);
         private Timer UpdateEngineTimer { get; set; }
         private static string sSource;
         private static string sLog;
@@ -39,7 +39,7 @@ namespace Yahara.Standup
         {
             //EventLog.WriteEntry(sSource, "In OnStart method", EventLogEntryType.Information, 234);
 
-            this.RequestAdditionalTime(20000);
+            this.RequestAdditionalTime(600000);
 
             if (serviceHost != null)
             {

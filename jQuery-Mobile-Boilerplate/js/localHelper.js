@@ -1,7 +1,3 @@
-
-//http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/WelcomeMessage?message=%22Hello%20World!%22
-
-
 function callGetStandupStatus(selectedDate) {
 
     //Clear list
@@ -15,14 +11,8 @@ function callGetStandupStatus(selectedDate) {
 
 //    startAnimation("Contacting Outlook for " + selectedDate + " ....");
 
-    var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
-    //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-    //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
-    //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-    //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-    //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-    //var link = "http://192.168.1.107/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-
+    var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?";
+    //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?";
 
     $.getJSON(link)
     .success(
@@ -165,16 +155,16 @@ function callGetStandupStatus(selectedDate) {
          }
      });
 
-     $("#mapPage").live('pageinit', function (event) {
-         if (event.type == "pageinit") {
+     $("#mapPage").live('pageshow', function (event) {
+         if (event.type == "pageshow") {
 
-//             var locations = [
-//              ['Bondi Beach', -33.890542, 151.274856, 4],
-//              ['Coogee Beach', -33.923036, 151.259052, 5],
-//              ['Cronulla Beach', -34.028249, 151.157507, 3],
-//              ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-//              ['Maroubra Beach', -33.950198, 151.259302, 1]
-//            ];
+             //             var locations = [
+             //              ['Bondi Beach', -33.890542, 151.274856, 4],
+             //              ['Coogee Beach', -33.923036, 151.259052, 5],
+             //              ['Cronulla Beach', -34.028249, 151.157507, 3],
+             //              ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+             //              ['Maroubra Beach', -33.950198, 151.259302, 1]
+             //            ];
 
              var locations = eval(allLocationsForMap); //allLocationsForMap //JSON.parse(allLocationsForMap); //jQuery.parseJSON(allLocationsForMap);
 
@@ -188,6 +178,8 @@ function callGetStandupStatus(selectedDate) {
 
              var marker, i;
 
+             if (typeof locations === "undefined")
+                 return;
              for (i = 0; i < locations.length; i++) {
                  marker = new google.maps.Marker({
                      position: new google.maps.LatLng(locations[i][1], locations[i][2]),
@@ -210,8 +202,8 @@ function callGetStandupStatus(selectedDate) {
 
              //             startAnimation("Retreiving current message from FrontDesk ....");
 
-             var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?"
-             //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?"
+             var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/ReadCurrentMessage?" + "callback=?";
+             //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/ReadCurrentMessage?" + "callback=?";
 
              $.getJSON(link)
                 .success(
@@ -464,11 +456,6 @@ function callGetStandupStatus(selectedDate) {
 
      var link = "http://standup.yaharasoftware.com/YaharaEmployeeStatusService/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?";
      //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetEmployeeTargetProcessSummary?date=" + selectedDate + "&callback=?";
-     //var link = "http://localhost:8000/YaharaEmployeeStatusService/Json/GetStatus?date=" + selectedDate + "&callback=?"
-     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-     //var link = "http://atulc-e6500-pc/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-     //var link = "http://localhost:51635/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
-     //var link = "http://192.168.1.107/Where/YaharaEmployeeStatusService.svc/Json/GetStatus?date=" + selectedDate + "&callback=?"
 
 
      $.getJSON(link)

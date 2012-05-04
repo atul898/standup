@@ -22,13 +22,21 @@ namespace Yahara.Standup
                  ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class YaharaEmployeeStatusService : IYaharaEmployeeStatusService
     {
-        public const int NumberOfPastDaysToCache = 20;
-        public const int NumberOfFutureDaysToCache = 10;
+        public const int NumberOfPastDaysToCache = 30;
+        public const int NumberOfFutureDaysToCache = 30;
         private static string sSource;
         private static string sLog;
         private Dictionary<int, Project> projects;
         private Dictionary<int, Client> clients;
         private Dictionary<string, Resource> resources;
+
+        //for sync
+        private readonly static object _doOutlookWorkSync = new object();
+        private readonly static object _doTPWorkSync = new object();
+        private readonly static object _doWSWorkSync = new object();
+        private readonly static object _doWelcomeMessageWorkSync = new object();
+        private readonly static object _doTransferLocationInfoWorkSync = new object();
+        
         
         #region Public Properties
         //we will cache dailty status data (email/calender/outlook) in this
@@ -52,9 +60,6 @@ namespace Yahara.Standup
             get { return YaharaEmployeeStatusService.listWSSummary; }
             set { YaharaEmployeeStatusService.listWSSummary = value; }
         }
-
-        //for sync
-        private readonly static object _doOutlookWorkSync = new object();
 
         //location related
         private static LocationSummary _locationSummary;
@@ -106,25 +111,28 @@ namespace Yahara.Standup
             WrappedBool b = new WrappedBool();
             try
             {
-                StringBuilder newFile = new StringBuilder();
-
-                string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
-
-                string[] splitC = { "<br />" };
-                string[] ls = message.Split(splitC, StringSplitOptions.None);
-
-                foreach (string s in ls)
+                lock (_doWelcomeMessageWorkSync)
                 {
-                    newFile.Append(s + "\r\n");
-                }
+                    StringBuilder newFile = new StringBuilder();
 
-                newFile.Append("\r\n\r\n\r\n\r\n\r\n");
+                    string[] file = System.IO.File.ReadAllLines(@"\\10.111.124.47\c$\RecBoard\Welcome.txt");
 
-                foreach (string line in file)
-                {
-                    newFile.Append(line + "\r\n");
+                    string[] splitC = { "<br />" };
+                    string[] ls = message.Split(splitC, StringSplitOptions.None);
+
+                    foreach (string s in ls)
+                    {
+                        newFile.Append(s + "\r\n");
+                    }
+
+                    newFile.Append("\r\n\r\n\r\n\r\n\r\n");
+
+                    foreach (string line in file)
+                    {
+                        newFile.Append(line + "\r\n");
+                    }
+                    System.IO.File.WriteAllText(@"\\10.111.124.47\c$\RecBoard\Welcome.txt", newFile.ToString());
                 }
-                System.IO.File.WriteAllText(@"\\10.111.124.47\c$\RecBoard\Welcome.txt", newFile.ToString());
             }
             catch
             {
@@ -312,12 +320,90 @@ namespace Yahara.Standup
         
         public LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude)
         {
-
             try
             {
-                if (string.IsNullOrEmpty(clientName))
-                    throw new ApplicationException("invalid client name");
-                var loc = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+                lock (_doTransferLocationInfoWorkSync)
+                {
+
+                    try
+                    {
+                        if (string.IsNullOrEmpty(clientName))
+                            throw new ApplicationException("invalid client name");
+                        var loc = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+                    }
+                    catch
+                    {
+                        LocationSummary ls = new LocationSummary();
+                        Location l = new Location();
+                        l.ClientName = "No cookie for you!";
+                        ls.ListOfItems.Add(l);
+                        return ls;
+                    }
+
+                    bool clientFound = false;
+                    //Find if this clientName exists in the list
+                    foreach (Location l in LocationSummary.ListOfItems)
+                    {
+                        if (l.ClientName == clientName)
+                        {
+                            l.Latitude = latitude;
+                            l.Longitude = longitude;
+                            l.Timestamp = DateTime.Now;
+                            clientFound = true;
+                            break;
+                        }
+                    }
+
+                    //This is a new client
+                    if (clientFound == false)
+                    {
+                        Location newLocation = new Location();
+                        newLocation.Longitude = longitude;
+                        newLocation.Latitude = latitude;
+                        newLocation.ClientName = clientName;
+                        newLocation.Timestamp = DateTime.Now; //DateTime.Now.ToString("D");
+                        newLocation.Link = @"http://maps.google.com/maps?q=" + clientName + @"@" + latitude + "," + longitude;
+                        LocationSummary.ListOfItems.Add(newLocation);
+                    }
+
+                    var selfCoord = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+                    foreach (Location l in LocationSummary.ListOfItems)
+                    {
+                        var otherCoord = new GeoCoordinate(double.Parse(l.Latitude), double.Parse(l.Longitude));
+                        var distance = selfCoord.GetDistanceTo(otherCoord);
+                        var distanceInMiles = 0.000621371192 * distance;
+                        if (distanceInMiles >= 1)
+                            l.Distance = distanceInMiles.ToString("F") + " miles";
+                        else
+                            l.Distance = (distanceInMiles * 1760).ToString("F") + " yards";
+                    }
+
+                    LocationSummary.DisplayDate = DateTime.Now.ToString("D");
+                    LocationSummary.UpdateAge();
+
+                    //Map display related info
+                    //Step 1: fill up AllLocationsForMap
+                    //[
+                    //  ['Bondi Beach', -33.890542, 151.274856, 4],
+                    //  ['Coogee Beach', -33.923036, 151.259052, 5],
+                    //  ['Cronulla Beach', -34.028249, 151.157507, 3],
+                    //  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+                    //  ['Maroubra Beach', -33.950198, 151.259302, 1]
+                    //]
+
+                    StringBuilder st = new StringBuilder();
+                    int count = 0;
+
+                    var arr = new List<object>();
+                    foreach (Location l in LocationSummary.ListOfItems)
+                    {
+                        st.Append("['" + l.ClientName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
+                        if (count < LocationSummary.ListOfItems.Count())
+                            st.Append(",");
+                    }
+                    LocationSummary.AllLocationsForMap = "[" + Environment.NewLine + st.ToString() + Environment.NewLine + "]";
+
+                }
             }
             catch
             {
@@ -327,70 +413,6 @@ namespace Yahara.Standup
                 ls.ListOfItems.Add(l);
                 return ls;
             }
-
-            bool clientFound = false;
-            //Find if this clientName exists in the list
-            foreach (Location l in LocationSummary.ListOfItems)
-            {
-                if (l.ClientName == clientName)
-                {
-                    l.Latitude = latitude;
-                    l.Longitude = longitude;
-                    l.Timestamp = DateTime.Now;
-                    clientFound = true;
-                    break;
-                }
-            }
-
-            //This is a new client
-            if (clientFound == false)
-            {
-                Location newLocation = new Location();
-                newLocation.Longitude = longitude;
-                newLocation.Latitude = latitude;
-                newLocation.ClientName = clientName;
-                newLocation.Timestamp = DateTime.Now; //DateTime.Now.ToString("D");
-                newLocation.Link = @"http://maps.google.com/maps?q=" + clientName + @"@" + latitude + "," + longitude;
-                LocationSummary.ListOfItems.Add(newLocation);
-            }
-
-            var selfCoord = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
-            foreach (Location l in LocationSummary.ListOfItems)
-            {
-                var otherCoord = new GeoCoordinate(double.Parse(l.Latitude), double.Parse(l.Longitude));
-                var distance = selfCoord.GetDistanceTo(otherCoord);
-                var distanceInMiles = 0.000621371192 * distance;
-                if (distanceInMiles >= 1)
-                    l.Distance = distanceInMiles.ToString("F") + " miles";
-                else
-                    l.Distance = (distanceInMiles * 1760).ToString("F") + " yards";
-            }
-
-            LocationSummary.DisplayDate = DateTime.Now.ToString("D");
-            LocationSummary.UpdateAge();
-
-            //Map display related info
-            //Step 1: fill up AllLocationsForMap
-            //[
-            //  ['Bondi Beach', -33.890542, 151.274856, 4],
-            //  ['Coogee Beach', -33.923036, 151.259052, 5],
-            //  ['Cronulla Beach', -34.028249, 151.157507, 3],
-            //  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-            //  ['Maroubra Beach', -33.950198, 151.259302, 1]
-            //]
-
-            StringBuilder st = new StringBuilder();
-            int count = 0;
-
-            var arr = new List<object>();
-            foreach (Location l in LocationSummary.ListOfItems)
-            {
-                st.Append("['" + l.ClientName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
-                if (count < LocationSummary.ListOfItems.Count())
-                    st.Append(",");
-            }
-            LocationSummary.AllLocationsForMap = "[" + Environment.NewLine + st.ToString() + Environment.NewLine + "]";
-
             return LocationSummary;
         }
 
@@ -400,143 +422,165 @@ namespace Yahara.Standup
 
         private Summary TargetProcessSummary(string strDate) //mmddyyyy format
         {
-            DateTime requestedDate = strDate.StringToDateTime();
-            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
-            previousMonday = previousMonday.AddDays(-1); //hack
-            requestedDate = requestedDate.AddDays(1); // & hack to get the number right (as they should be)
-
-            //Step 1 : Collect all emails
-            Summary summary = new Summary(strDate.StringToDateTime());
-            var webClient = new WebClient();
-            webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
-
-            var nextLink = "http://tp.yaharasoftware.com/api/v1/Users?format=json";
-
-            while (nextLink != null)
+            Summary summary = null;
+            try
             {
-                Stream data = webClient.OpenRead(nextLink);
-                StreamReader reader = new StreamReader(data);
-                string json = reader.ReadToEnd();
-                //Debug.WriteLine(json);
-                data.Close();
-                reader.Close();
-
-                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
-                int count = tpEntry.Items.Count;
-                for (int i = 0; i < count; i++)
+                lock (_doTPWorkSync)
                 {
-                    try
+                    DateTime requestedDate = strDate.StringToDateTime();
+                    DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
+                    previousMonday = previousMonday.AddDays(-1); //hack
+                    requestedDate = requestedDate.AddDays(1); // & hack to get the number right (as they should be)
+
+                    //Step 1 : Collect all emails
+                    summary = new Summary(strDate.StringToDateTime());
+                    var webClient = new WebClient();
+                    webClient.Headers.Add("Authorization", "Basic YXR1bGM6dGVzdGluZw==");
+                    JavaScriptSerializer jss = new JavaScriptSerializer();
+                    jss.RegisterConverters(new JavaScriptConverter[] { new DynamicJsonConverter() });
+
+                    var nextLink = "http://tp.yaharasoftware.com/api/v1/Users?format=json";
+
+                    while (nextLink != null)
                     {
-                        string email = tpEntry.Items[i]["Email"].ToLower();
-                        if (!email.Contains("yahara") || tpEntry.Items[i]["IsActive"] == false)
-                            continue;
+                        Stream data = webClient.OpenRead(nextLink);
+                        StreamReader reader = new StreamReader(data);
+                        string json = reader.ReadToEnd();
+                        //Debug.WriteLine(json);
+                        data.Close();
+                        reader.Close();
 
-                        EmployeeDetail ed = new EmployeeDetail();
-                        ed.Id = tpEntry.Items[i]["Id"];
-                        ed.Name = tpEntry.Items[i]["FirstName"] + " " + tpEntry.Items[i]["LastName"];
-                        ed.Email = tpEntry.Items[i]["Email"];
-                        summary.ListOfItems.Add(ed);
-                    }
-                    catch
-                    {
-                        //ignore and move on
-                    }
-                }
-                try
-                {
-                    if (tpEntry.Next != null)
-                        nextLink = tpEntry.Next;
-                    else
-                        nextLink = null;
-                }
-                catch (KeyNotFoundException)
-                {
-                    nextLink = null;
-                }
-            }
-
-            //Step 2 : Collect all times for this week
-            //var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'2012-04-16')%20and%20(Date%20lt%20'2012-04-19')";
-            var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'"
-                                + previousMonday.ToString("yyyy-MM-dd")
-                                + "')%20and%20(Date%20lt%20'"
-                                + requestedDate.ToString("yyyy-MM-dd")
-                                + "')";
-
-            while (nextTimeLink != null)
-            {
-                Stream data = webClient.OpenRead(nextTimeLink);
-                StreamReader reader = new StreamReader(data);
-                string json = reader.ReadToEnd();
-                //Debug.WriteLine(json);
-                data.Close();
-                reader.Close();
-
-                dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
-                int count = tpEntry.Items.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    try
-                    {
-                        int Id = tpEntry.Items[i]["User"]["Id"];
-                        var ed = (from l in summary.ListOfItems where l.Id == Id select l).FirstOrDefault();
-                        if (ed == null)
-                            continue;
-
-                        DateTime dateTimeSpentOn = tpEntry.Items[i]["Date"];
-                        decimal timeSpent = tpEntry.Items[i]["Spent"];
-
-                        if ((requestedDate.GetEndOfDay().CompareTo(dateTimeSpentOn) >= 0) && (previousMonday.Date.CompareTo(dateTimeSpentOn) <= 0))
+                        dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
+                        int count = tpEntry.Items.Count;
+                        for (int i = 0; i < count; i++)
                         {
-                            (from l in summary.ListOfItems where l.Id == Id select l).First().TotalHoursLogged += timeSpent;
+                            try
+                            {
+                                string email = tpEntry.Items[i]["Email"].ToLower();
+                                if (!email.Contains("yahara") || tpEntry.Items[i]["IsActive"] == false)
+                                    continue;
+
+                                EmployeeDetail ed = new EmployeeDetail();
+                                ed.Id = tpEntry.Items[i]["Id"];
+                                ed.Name = tpEntry.Items[i]["FirstName"] + " " + tpEntry.Items[i]["LastName"];
+                                ed.Email = tpEntry.Items[i]["Email"];
+                                summary.ListOfItems.Add(ed);
+                            }
+                            catch
+                            {
+                                //ignore and move on
+                            }
+                        }
+                        try
+                        {
+                            if (tpEntry.Next != null)
+                                nextLink = tpEntry.Next;
+                            else
+                                nextLink = null;
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            nextLink = null;
                         }
                     }
-                    catch
+
+                    //Step 2 : Collect all times for this week
+                    //var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'2012-04-16')%20and%20(Date%20lt%20'2012-04-19')";
+                    var nextTimeLink = "http://tp.yaharasoftware.com/api/v1/Times?format=json&take=1000&where=(Date%20gt%20'"
+                                        + previousMonday.ToString("yyyy-MM-dd")
+                                        + "')%20and%20(Date%20lt%20'"
+                                        + requestedDate.ToString("yyyy-MM-dd")
+                                        + "')";
+
+                    while (nextTimeLink != null)
                     {
-                        //ignore and move on
+                        Stream data = webClient.OpenRead(nextTimeLink);
+                        StreamReader reader = new StreamReader(data);
+                        string json = reader.ReadToEnd();
+                        //Debug.WriteLine(json);
+                        data.Close();
+                        reader.Close();
+
+                        dynamic tpEntry = jss.Deserialize(json, typeof(object)) as dynamic;
+                        int count = tpEntry.Items.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            try
+                            {
+                                int Id = tpEntry.Items[i]["User"]["Id"];
+                                var ed = (from l in summary.ListOfItems where l.Id == Id select l).FirstOrDefault();
+                                if (ed == null)
+                                    continue;
+
+                                DateTime dateTimeSpentOn = tpEntry.Items[i]["Date"];
+                                decimal timeSpent = tpEntry.Items[i]["Spent"];
+
+                                if ((requestedDate.GetEndOfDay().CompareTo(dateTimeSpentOn) >= 0) && (previousMonday.Date.CompareTo(dateTimeSpentOn) <= 0))
+                                {
+                                    (from l in summary.ListOfItems where l.Id == Id select l).First().TotalHoursLogged += timeSpent;
+                                }
+                            }
+                            catch
+                            {
+                                //ignore and move on
+                            }
+                        }
+                        try
+                        {
+                            if (tpEntry.Next != null)
+                                nextTimeLink = tpEntry.Next;
+                            else
+                                nextTimeLink = null;
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            nextTimeLink = null;
+                        }
                     }
-                }
-                try
-                {
-                    if (tpEntry.Next != null)
-                        nextTimeLink = tpEntry.Next;
-                    else
-                        nextTimeLink = null;
-                }
-                catch (KeyNotFoundException)
-                {
-                    nextTimeLink = null;
+
+                    EmployeeDetailComparer dc = new EmployeeDetailComparer();
+                    summary.ListOfItems.Sort(dc);
+
                 }
             }
-
-            EmployeeDetailComparer dc = new EmployeeDetailComparer();
-            summary.ListOfItems.Sort(dc);
-
+            catch
+            {
+                ;//Exception swallowing technology
+            }
             return summary;
         }
 
         private Summary WebShadowSummary(string strDate) //mmddyyyy format
         {
-            DateTime requestedDate = strDate.StringToDateTime();
-            DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
-
-            ForecastSummary fs = GetForecast(previousMonday.DateTimeToString(), requestedDate.DateTimeToString());
-
-            Summary summary = new Summary(strDate.StringToDateTime());
-            summary.ListOfItems = new List<EmployeeDetail>(fs.Resources.Count);
-
-            foreach (ResourceSummary rs in fs.Resources)
+            Summary summary = null;
+            try
             {
-                EmployeeDetail ed = new EmployeeDetail();
-                ed.TotalHoursLogged = (decimal)rs.TotalHoursRecorded;
-                ed.Name = rs.Resource.FirstName + " " + rs.Resource.LastName;
-                summary.ListOfItems.Add(ed);
-            }
+                lock (_doTPWorkSync)
+                {
+                    DateTime requestedDate = strDate.StringToDateTime();
+                    DateTime previousMonday = requestedDate.StartOfWeek(DayOfWeek.Monday);
 
-            EmployeeDetailComparer dc = new EmployeeDetailComparer();
-            summary.ListOfItems.Sort(dc);
+                    ForecastSummary fs = GetForecast(previousMonday.DateTimeToString(), requestedDate.DateTimeToString());
+
+                    summary = new Summary(strDate.StringToDateTime());
+                    summary.ListOfItems = new List<EmployeeDetail>(fs.Resources.Count);
+
+                    foreach (ResourceSummary rs in fs.Resources)
+                    {
+                        EmployeeDetail ed = new EmployeeDetail();
+                        ed.TotalHoursLogged = (decimal)rs.TotalHoursRecorded;
+                        ed.Name = rs.Resource.FirstName + " " + rs.Resource.LastName;
+                        summary.ListOfItems.Add(ed);
+                    }
+
+                    EmployeeDetailComparer dc = new EmployeeDetailComparer();
+                    summary.ListOfItems.Sort(dc);
+                }
+            }
+            catch
+            {
+                ;//Exception Swallowing Technology
+            }
             return summary;
         }
 
@@ -802,21 +846,80 @@ namespace Yahara.Standup
             string strDate2 = date.Date.AddDays(1).ToString(@"MMMM dd, yyyy hh:mm tt");
 
             Microsoft.Office.Interop.Outlook.AppointmentItem item = null;
-            string sFilter = "[Start] >= '" + strDate1 + "'"
-                            + " and " +
-                            "[End] <= '" + strDate2 + "'";
+            //Single Appt for any recurring apointment
+            Microsoft.Office.Interop.Outlook.AppointmentItem singleAppt = null;
 
+            //string sFilter = "[Start] >= '" + strDate1 + "'"
+            //                + " and " +
+            //                "[End] <= '" + strDate2 + "'";
+
+            //string sFilter = "([Start] >= '" +
+            //        date.Date.ToString("g")
+            //        + "' AND [End] <= '" +
+            //        date.AddDays(1).Date.ToString("g") + "'";
+
+            //appointments that start and end within the time
+            string sFilter1 = "[Start] >= '" +
+                    date.Date.ToString("g")
+                    + "' AND [End] <= '" +
+                    date.AddDays(1).Date.ToString("g") + "'";
+
+            //appointments that start before starttime and end after starttime
+            string sFilter2 = "[Start] < '" +
+                    date.Date.ToString("g")
+                    + "' AND [End] > '" +
+                    date.Date.ToString("g") + "'";
+
+            //appointments that start before endtime and end after endtime
+            string sFilter3 = "[Start] < '" +
+                    date.AddDays(1).ToString("g")
+                    + "' AND [End] > '" +
+                    date.AddDays(1).Date.ToString("g") + "'";
+
+            string sFilter = ("( " + sFilter1 + " ) OR ( " + sFilter2 + " ) OR ( " + sFilter3 + " )");
+
+
+            calendarFolder.Items.IncludeRecurrences = true;
             Microsoft.Office.Interop.Outlook.Items outlookCalendarItems = calendarFolder.Items.Restrict(sFilter);
+            outlookCalendarItems.Sort("[Start]", Type.Missing);
+
             Debug.WriteLine("Count after Restrict: {0}", outlookCalendarItems.Count);
 
             foreach (var v in outlookCalendarItems)
             {
                 try
                 {
+                    //This Appointment
                     item = (Microsoft.Office.Interop.Outlook.AppointmentItem)v;
 
                     if (item.IsRecurring)
-                        continue;
+                    {
+                        try
+                        {
+                            DateTime startDateTime = item.StartInStartTimeZone;
+                            Microsoft.Office.Interop.Outlook.RecurrencePattern pattern =
+                                item.GetRecurrencePattern();
+                            singleAppt =
+                                pattern.GetOccurrence(date.Date.Add(startDateTime.TimeOfDay))
+                                as Microsoft.Office.Interop.Outlook.AppointmentItem;
+                            if (singleAppt == null)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(item);
+                                item = null;
+
+                                item = singleAppt;
+                            }
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+
 
                     var subject = item.Subject;
                     var body = item.Body;
@@ -827,6 +930,8 @@ namespace Yahara.Standup
 
                     OutlookItem c = new OutlookItem();
                     c.Subject = "From " + start.ToString("t") + " To " + end.ToString("t");
+                    if (c.Subject == "From 12:00 AM To 12:00 AM")
+                        c.Subject = "All Day";
                     c.Name = item.Subject;
                     if (!string.IsNullOrWhiteSpace(location))
                         c.MessageBody = "Location : " + location + Environment.NewLine;
@@ -834,6 +939,8 @@ namespace Yahara.Standup
 
                     c.MessageHTMLBody = c.MessageBody;
                     c.DisplayTime = start.ToString("t");
+                    if (c.DisplayTime == "12:00 AM")
+                        c.DisplayTime = " "; //empty string, no point is displaying 12:00 AM
 
                     Debug.WriteLine(c.Name);
                     Debug.WriteLine(c.Subject);
@@ -851,6 +958,11 @@ namespace Yahara.Standup
                     {
                         System.Runtime.InteropServices.Marshal.FinalReleaseComObject(item);
                         item = null;
+                    }
+                    if (singleAppt != null)
+                    {
+                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(singleAppt);
+                        singleAppt = null;
                     }
                 }
             }
