@@ -657,13 +657,19 @@ function Location(position)//location function is defining with parameter
                         //                </a>
                         //            </li>
 
+                        var displayName;
+                        if (data.ListOfItems[i].RealName == "")
+                            displayName = data.ListOfItems[i].ClientName;
+                        else
+                            displayName = data.ListOfItems[i].RealName;
+
                         if (currentUser == data.ListOfItems[i].ClientName) {
-                            row = '<li><a href="' + data.ListOfItems[i].Link + '"><h3>' + ':-) ' + data.ListOfItems[i].ClientName + '    ' +
+                            row = '<li><a href="' + data.ListOfItems[i].Link + '"><h3>' + '==> ' + displayName + '    ' +
                                 '</h3><p>' + data.ListOfItems[i].Latitude + ', ' + data.ListOfItems[i].Longitude +
                                 '</p><p class="ui-li-aside"><strong>' + ' ' + '</strong></p></a> </li>';
                         }
                         else {
-                            row = '<li><a href="' + data.ListOfItems[i].Link + '"><h3>' + data.ListOfItems[i].ClientName + '    ' +
+                            row = '<li><a href="' + data.ListOfItems[i].Link + '"><h3>' + displayName + '    ' +
                             '</h3><p>' + ' was here ' + data.ListOfItems[i].Age + ' ago' +
                             '</p><p class="ui-li-aside"><strong>' + data.ListOfItems[i].Distance + '</strong></p></a> </li>';
                         }

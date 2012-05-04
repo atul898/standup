@@ -13,6 +13,8 @@ namespace Yahara.Standup
     [ServiceContract(Name = "Yahara.Standup.YaharaEmployeeStatusService", Namespace = "Where")]
     public interface IYaharaEmployeeStatusService
     {
+        #region Operation Contracts
+
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetStatus?date={date}")]
         Status GetStatus(string date); //mmddyyyy format
@@ -46,7 +48,11 @@ namespace Yahara.Standup
         //[OperationContract]
         //[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetForecast?startdate={start}&enddate={end}")]
         ForecastSummary GetForecast(string start, string end); //mmddyyyy format
+
+        #endregion
     }
+
+    #region Data Contracts
 
     [DataContract]
     public class WrappedBool
@@ -352,6 +358,14 @@ namespace Yahara.Standup
             set { clientName = value; }
         }
 
+        string realName = string.Empty;
+        [DataMember]
+        public string RealName
+        {
+            get { return realName; }
+            set { realName = value; }
+        }
+
         DateTime timestamp = DateTime.Now;
         public DateTime Timestamp
         {
@@ -383,4 +397,6 @@ namespace Yahara.Standup
             set { distance = value; }
         }
     }
+
+    #endregion
 }

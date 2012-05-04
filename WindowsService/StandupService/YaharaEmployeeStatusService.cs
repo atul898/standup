@@ -24,8 +24,10 @@ namespace Yahara.Standup
     {
         public const int NumberOfPastDaysToCache = 30;
         public const int NumberOfFutureDaysToCache = 30;
+
         private static string sSource;
         private static string sLog;
+
         private Dictionary<int, Project> projects;
         private Dictionary<int, Client> clients;
         private Dictionary<string, Resource> resources;
@@ -75,6 +77,7 @@ namespace Yahara.Standup
         #endregion
 
         #region Constructor
+
         private YaharaEmployeeStatusService()
         {
             sSource = "YaharaEmployeeStatusService";
@@ -92,6 +95,7 @@ namespace Yahara.Standup
             ListTPSummary = new List<Summary>();
             ListWSSummary = new List<Summary>();
         }
+
         #endregion
 
         #region Implementaion of IYaharaEmployeeStatusService
@@ -219,104 +223,6 @@ namespace Yahara.Standup
             }
             return s;
         }
-        /// <summary>
-        /// Build a forecast all nasty style.  Refactor this later when we know what we really want.
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        public ForecastSummary GetForecast(string sStart, string sEnd)
-        {
-            DateTime start = sStart.StringToDateTime();
-            DateTime end = sEnd.StringToDateTime();
-
-            using (var context = new SchedulingEntities())
-            {
-                var results = new List<ResourceSummary>();
-                string currentUser = string.Empty;
-
-                ResourceSummary current = null;
-
-                var scheduleView = GetScheduleView(context, start, end);
-                var resourceIds = (from item in scheduleView select item.EmployeeID).Distinct();
-
-                foreach (var resourceId in resourceIds)
-                {
-                    // for each distinct resource set up a ResourceSummary
-                    if (current == null || current.Resource == null || current.Resource.UserId != resourceId)
-                    {
-                        // The summary view has some generic stuff we need the first time we set up a dude
-                        var viewRecord = scheduleView.Where(v => v.EmployeeID == resourceId).First();
-
-                        current = new ResourceSummary();
-                        results.Add(current);
-                        current.Resource = GetResource(viewRecord);
-                        current.StartDate = viewRecord.Week;
-                    }
-
-
-                    // Next we need to take a combination of what the resource was scheduled for, against what they have recorded in webshadow.
-                    Dictionary<int, ProjectHoursRollup> projectHours = GetProjectHoursRollup(context, resourceId, start, end).ToDictionary(dk => dk.ProjectID);
-                    foreach (var scheduleItem in (from sv in scheduleView where sv.EmployeeID == resourceId select sv))
-                    {
-                        int id = int.Parse(scheduleItem.AppProjectID);
-
-                        if (projectHours.ContainsKey(id))
-                        {
-                            projectHours[id].HoursScheduled = (double)scheduleItem.ForecastHours;
-                        }
-                        else
-                        {
-                            projectHours.Add(id,
-                                new ProjectHoursRollup()
-                                {
-                                    BillableHours = 0,
-                                    NonBillableHours = 0,
-                                    HoursScheduled = (double)scheduleItem.ForecastHours,
-                                    ProjectID = id,
-                                    ResourceID = resourceId,
-                                    ClientID = scheduleItem.ClientID
-                                });
-                        }
-                    }
-
-
-                    foreach (var projectItem in projectHours.Values.OrderBy(ph => ph.IsScheduled))
-                    {
-                        current.TotalHoursRecorded += projectItem.TotalHoursRealized;
-                        current.TotalHoursScheduled += projectItem.HoursScheduled;
-                        current.BillableHoursScheduled += projectItem.BillableHours;
-
-                        current.Assignments.Add(new ScheduledAssignment()
-                        {
-                            AssignedProject = GetProject(context, projectItem.ProjectID),
-                            AssignedResource = current.Resource,
-                            HoursScheduled = projectItem.HoursScheduled,
-                            HoursRecorded = projectItem.TotalHoursRealized,
-                            IsScheduled = projectItem.IsScheduled
-                        });
-                    }
-                }
-
-                var summary = new ForecastSummary()
-                {
-                    BillableHoursScheduled = (from rs in results select rs.BillableHoursScheduled).Sum(),
-                    TotalHoursScheduled = (from rs in results select rs.TotalHoursScheduled).Sum(),
-                    EndDate = end,
-                    StartDate = start,
-                    Resources = results
-                };
-
-
-                ScheduledAssignment.ScheduledFirstSorter sorter = new ScheduledAssignment.ScheduledFirstSorter();
-                foreach (var rs in summary.Resources)
-                {
-                    rs.Assignments.Sort(sorter);
-                }
-
-                return summary;
-            }
-        }
         
         public LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude)
         {
@@ -324,12 +230,25 @@ namespace Yahara.Standup
             {
                 lock (_doTransferLocationInfoWorkSync)
                 {
-
+                    string realName = string.Empty;
                     try
                     {
                         if (string.IsNullOrEmpty(clientName))
                             throw new ApplicationException("invalid client name");
                         var loc = new GeoCoordinate(double.Parse(latitude), double.Parse(longitude));
+
+                        //Let us find the real name
+                        if (ListTPSummary.Count > 0 && ListTPSummary[0].ListOfItems != null && ListTPSummary[0].ListOfItems.Count>0)
+                        {
+                            foreach (EmployeeDetail ed in ListTPSummary[0].ListOfItems)
+                            {
+                                if (ed.Email.ToLower().Contains(clientName.ToLower()))
+                                {
+                                    realName = ed.Name;
+                                    continue;
+                                }
+                            }
+                        }
                     }
                     catch
                     {
@@ -344,11 +263,12 @@ namespace Yahara.Standup
                     //Find if this clientName exists in the list
                     foreach (Location l in LocationSummary.ListOfItems)
                     {
-                        if (l.ClientName == clientName)
+                        if (l.ClientName.ToLower() == clientName.ToLower())
                         {
                             l.Latitude = latitude;
                             l.Longitude = longitude;
                             l.Timestamp = DateTime.Now;
+                            l.RealName = realName;
                             clientFound = true;
                             break;
                         }
@@ -397,12 +317,14 @@ namespace Yahara.Standup
                     var arr = new List<object>();
                     foreach (Location l in LocationSummary.ListOfItems)
                     {
-                        st.Append("['" + l.ClientName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
+                        if(string.IsNullOrEmpty(l.RealName))
+                            st.Append("['" + l.ClientName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
+                        else
+                            st.Append("['" + l.RealName + "'," + l.Latitude + "," + l.Longitude + "," + (++count).ToString() + "]");
                         if (count < LocationSummary.ListOfItems.Count())
                             st.Append(",");
                     }
                     LocationSummary.AllLocationsForMap = "[" + Environment.NewLine + st.ToString() + Environment.NewLine + "]";
-
                 }
             }
             catch
@@ -969,6 +891,8 @@ namespace Yahara.Standup
             return status;
         }
 
+        #region WebShadow Stuff
+
         private Resource GetResource(SchedulerView view)
         {
             if (!resources.ContainsKey(view.UserID))
@@ -1028,9 +952,7 @@ namespace Yahara.Standup
 
             return clients[ClientID];
         }
-
-
-
+        
         /*
         private double GetHoursForProjectByResource(SchedulingEntities context, int ProjectId, string resourceId, DateTime start, DateTime end)
         {
@@ -1110,6 +1032,106 @@ namespace Yahara.Standup
             return query.ToList();
         }
 
+        /// <summary>
+        /// Build a forecast all nasty style.  Refactor this later when we know what we really want.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public ForecastSummary GetForecast(string sStart, string sEnd)
+        {
+            DateTime start = sStart.StringToDateTime();
+            DateTime end = sEnd.StringToDateTime();
+
+            using (var context = new SchedulingEntities())
+            {
+                var results = new List<ResourceSummary>();
+                string currentUser = string.Empty;
+
+                ResourceSummary current = null;
+
+                var scheduleView = GetScheduleView(context, start, end);
+                var resourceIds = (from item in scheduleView select item.EmployeeID).Distinct();
+
+                foreach (var resourceId in resourceIds)
+                {
+                    // for each distinct resource set up a ResourceSummary
+                    if (current == null || current.Resource == null || current.Resource.UserId != resourceId)
+                    {
+                        // The summary view has some generic stuff we need the first time we set up a dude
+                        var viewRecord = scheduleView.Where(v => v.EmployeeID == resourceId).First();
+
+                        current = new ResourceSummary();
+                        results.Add(current);
+                        current.Resource = GetResource(viewRecord);
+                        current.StartDate = viewRecord.Week;
+                    }
+
+
+                    // Next we need to take a combination of what the resource was scheduled for, against what they have recorded in webshadow.
+                    Dictionary<int, ProjectHoursRollup> projectHours = GetProjectHoursRollup(context, resourceId, start, end).ToDictionary(dk => dk.ProjectID);
+                    foreach (var scheduleItem in (from sv in scheduleView where sv.EmployeeID == resourceId select sv))
+                    {
+                        int id = int.Parse(scheduleItem.AppProjectID);
+
+                        if (projectHours.ContainsKey(id))
+                        {
+                            projectHours[id].HoursScheduled = (double)scheduleItem.ForecastHours;
+                        }
+                        else
+                        {
+                            projectHours.Add(id,
+                                new ProjectHoursRollup()
+                                {
+                                    BillableHours = 0,
+                                    NonBillableHours = 0,
+                                    HoursScheduled = (double)scheduleItem.ForecastHours,
+                                    ProjectID = id,
+                                    ResourceID = resourceId,
+                                    ClientID = scheduleItem.ClientID
+                                });
+                        }
+                    }
+
+
+                    foreach (var projectItem in projectHours.Values.OrderBy(ph => ph.IsScheduled))
+                    {
+                        current.TotalHoursRecorded += projectItem.TotalHoursRealized;
+                        current.TotalHoursScheduled += projectItem.HoursScheduled;
+                        current.BillableHoursScheduled += projectItem.BillableHours;
+
+                        current.Assignments.Add(new ScheduledAssignment()
+                        {
+                            AssignedProject = GetProject(context, projectItem.ProjectID),
+                            AssignedResource = current.Resource,
+                            HoursScheduled = projectItem.HoursScheduled,
+                            HoursRecorded = projectItem.TotalHoursRealized,
+                            IsScheduled = projectItem.IsScheduled
+                        });
+                    }
+                }
+
+                var summary = new ForecastSummary()
+                {
+                    BillableHoursScheduled = (from rs in results select rs.BillableHoursScheduled).Sum(),
+                    TotalHoursScheduled = (from rs in results select rs.TotalHoursScheduled).Sum(),
+                    EndDate = end,
+                    StartDate = start,
+                    Resources = results
+                };
+
+
+                ScheduledAssignment.ScheduledFirstSorter sorter = new ScheduledAssignment.ScheduledFirstSorter();
+                foreach (var rs in summary.Resources)
+                {
+                    rs.Assignments.Sort(sorter);
+                }
+
+                return summary;
+            }
+        }
+
+        #endregion
 
         #endregion
     }

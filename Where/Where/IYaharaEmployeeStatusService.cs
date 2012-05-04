@@ -14,6 +14,8 @@ namespace Where
     [ServiceContract(Name="YaharaEmployeeStatusService",Namespace="Where")]     
     public interface IYaharaEmployeeStatusService
     {
+        #region Operation Contracts
+
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetStatus?date={date}")]
         Status GetStatus(string date); //mmddyyyy format
@@ -38,8 +40,6 @@ namespace Where
         [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/TransferLocationInfo?clientName={clientName}&latitude={latitude}&longitude={longitude}")]
         LocationSummary TransferLocationInfo(string clientName, string latitude, string longitude); //mmddyyyy format
 
-
-
         /// <summary>
         /// Returns an object graph representing resource assignments over a date range.
         /// </summary>
@@ -49,7 +49,12 @@ namespace Where
         //[OperationContract]
         //[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "Json/GetForecast?startdate={start}&enddate={end}")]
         ForecastSummary GetForecast(string start, string end); //mmddyyyy format
+
+        #endregion
     }
+
+
+    #region Data Contracts
 
     [DataContract]
     public class WrappedBool
@@ -307,7 +312,7 @@ namespace Where
             get { return allLocationsForMap; }
             internal set { allLocationsForMap = value; }
         }
-        
+
         public void UpdateAge()
         {
             DateTime dt = DateTime.Now;
@@ -355,6 +360,14 @@ namespace Where
             set { clientName = value; }
         }
 
+        string realName = string.Empty;
+        [DataMember]
+        public string RealName
+        {
+            get { return realName; }
+            set { realName = value; }
+        }
+
         DateTime timestamp = DateTime.Now;
         public DateTime Timestamp
         {
@@ -386,4 +399,6 @@ namespace Where
             set { distance = value; }
         }
     }
+
+    #endregion
 }
