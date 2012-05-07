@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LocationSummary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ListOfItems>
+    <Location>
+      <Latitude>43.0937176</Latitude>
+      <Longitude>-89.5253607</Longitude>
+      <ClientName>atulc</ClientName>
+      <RealName />
+      <Timestamp>2012-05-07T15:14:57.2326896-05:00</Timestamp>
+      <Age>0 seconds</Age>
+      <Link>http://maps.google.com/maps?q=atulc@43.0937176,-89.5253607</Link>
+      <Distance>0.00 yards</Distance>
+    </Location>
+    <Location>
+      <Latitude>43.08734567916848</Latitude>
+      <Longitude>-89.52227572460585</Longitude>
+      <ClientName>Bvandenb</ClientName>
+      <RealName />
+      <Timestamp>2012-05-04T14:37:14.3378979-05:00</Timestamp>
+      <Age>3 days</Age>
+      <Link>http://maps.google.com/maps?q=Bvandenb@43.08734567,-89.5222757</Link>
+      <Distance>822.57 yards</Distance>
+    </Location>
+    <Location>
+      <Latitude>43.075586</Latitude>
+      <Longitude>-89.5242</Longitude>
+      <ClientName>KevinM</ClientName>
+      <RealName>Kevin Meech</RealName>
+      <Timestamp>2012-05-04T14:37:14.3378979-05:00</Timestamp>
+      <Age>3 days</Age>
+      <Link>http://maps.google.com/maps?q=KevinM@43.075586,-89.5242</Link>
+      <Distance>1.26 miles</Distance>
+    </Location>
+    <Location>
+      <Latitude>42.3636</Latitude>
+      <Longitude>-87.844793</Longitude>
+      <ClientName>jeffn</ClientName>
+      <RealName>Jeff Noack</RealName>
+      <Timestamp>2012-05-04T14:37:14.3378979-05:00</Timestamp>
+      <Age>3 days</Age>
+      <Link>http://maps.google.com/maps?q=jeffn@42.363,-87.844793</Link>
+      <Distance>99.18 miles</Distance>
+    </Location>
+  </ListOfItems>
+  <DisplayDate>Monday, May 07, 2012</DisplayDate>
+  <AllLocationsForMap>[
+['atulc',43.0937176,-89.5253607,1],['Bvandenb',43.08734567916848,-89.52227572460585,2],['Kevin Meech',43.075586,-89.5242,3],['Jeff Noack',42.3636,-87.844793,4]
+]</AllLocationsForMap>
+</LocationSummary>

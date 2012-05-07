@@ -318,6 +318,8 @@ namespace Yahara.Standup
             foreach (Location l in listOfItems)
             {
                 TimeSpan t = dt.Subtract(l.Timestamp);
+                //if (t >= new TimeSpan(30, 0, 0, 0))
+                //    l.Age = "an eternity ago";
                 if (t >= new TimeSpan(1, 0, 0, 0))
                     l.Age = t.Days.ToString() + " days";
                 else if (t >= new TimeSpan(1, 0, 0))
