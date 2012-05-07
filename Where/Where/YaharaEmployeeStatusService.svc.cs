@@ -77,6 +77,10 @@ namespace Where
                     _locationSummary = new LocationSummary();
                 return YaharaEmployeeStatusService._locationSummary;
             }
+            set
+            {
+                YaharaEmployeeStatusService._locationSummary = value;
+            }
         }
         #endregion
 
@@ -177,7 +181,7 @@ namespace Where
             if (s != null)
             {
                 //Is the data older than 10 minutes
-                if (DateTime.Now.Subtract(s.Timestamp).CompareTo(new TimeSpan(0, 10, 0)) > 1)
+                if (DateTime.Now.Subtract(s.Timestamp).CompareTo(new TimeSpan(0, 10, 0)) > 0)
                 {
                     ListTPSummary.Remove(s);
                     s = TargetProcessSummary(strDate);
@@ -201,7 +205,7 @@ namespace Where
             if (s != null)
             {
                 //Is the data older than 10 minutes
-                if (DateTime.Now.Subtract(s.Timestamp).CompareTo(new TimeSpan(0, 10, 0)) > 1)
+                if (DateTime.Now.Subtract(s.Timestamp).CompareTo(new TimeSpan(0, 10, 0)) > 0)
                 {
                     ListWSSummary.Remove(s);
                     s = WebShadowSummary(strDate);

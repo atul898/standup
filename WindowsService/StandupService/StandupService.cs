@@ -3,6 +3,7 @@ using System.ServiceProcess;
 using System;
 using System.ServiceModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace Yahara.Standup
 {
@@ -48,8 +49,23 @@ namespace Yahara.Standup
 
             serviceHost = new ServiceHost(typeof(YaharaEmployeeStatusService));
 
-
+            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(LocationSummary));
             serviceHost.Open();
+
+            try
+            {
+
+                using (TextReader tr = new StreamReader("C:\\LocationSummary.xml"))
+                {
+                    LocationSummary lc = (LocationSummary)serializer.Deserialize(tr);
+                    YaharaEmployeeStatusService.LocationSummary = lc;
+                }
+            }
+            catch
+            {
+                YaharaEmployeeStatusService.LocationSummary = null;
+                ;//Exception Swallowing Technology :-)
+            }
 
             YaharaEmployeeStatusService.DoWork(DateTime.Today, true);
 
@@ -63,6 +79,14 @@ namespace Yahara.Standup
         {
             //EventLog.WriteEntry(sSource, "In OnStart method", EventLogEntryType.Information, 234);
 
+            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(LocationSummary));
+
+            using (TextWriter tw = new StreamWriter("C:\\LocationSummary.xml"))
+            {
+                serializer.Serialize(tw, YaharaEmployeeStatusService.LocationSummary);
+                tw.Close(); 
+            }
+ 
             if (serviceHost != null)
             {
                 serviceHost.Close();

@@ -87,7 +87,7 @@ namespace Yahara.Standup
             listOfItems = new List<EmployeeDetail>();
             date = d.DateTimeToString();
             displayDate = d.ToString("D");
-            DateTime timestamp = DateTime.Now;
+            timestamp = DateTime.Now;
         }
 
         List<EmployeeDetail> listOfItems = null;
@@ -116,6 +116,7 @@ namespace Yahara.Standup
         }
 
         DateTime timestamp = DateTime.Now;
+        //[DataMember]
         public DateTime Timestamp
         {
             get { return timestamp; }
@@ -293,7 +294,7 @@ namespace Yahara.Standup
         public string DisplayDate
         {
             get { return displayDate; }
-            internal set { displayDate = value; }
+            set { displayDate = value; }
         }
 
         //eg. [
@@ -308,7 +309,7 @@ namespace Yahara.Standup
         public string AllLocationsForMap
         {
             get { return allLocationsForMap; }
-            internal set { allLocationsForMap = value; }
+            set { allLocationsForMap = value; }
         }
 
         public void UpdateAge()
