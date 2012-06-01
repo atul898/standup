@@ -728,6 +728,7 @@ namespace Yahara.Standup
                         || subject.Contains("home")
                         || subject.Contains("leaving")
                         || subject.Contains("today")
+                        || subject.Contains("scrum")
                         || subject.Contains("late")
                         //|| body.Contains("standup")
                         //|| body.Contains("stand up")
